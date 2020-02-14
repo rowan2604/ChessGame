@@ -1,7 +1,7 @@
-const port = 4020
 var express = require('express');
 var app = express();
+app.listen(4020);
 
 app.get('/', function(req, res) {
-    res.sendfile(__dirname + '/assets/home.html');
+    res.sendfile(__dirname + '/assets/html/home.html');
 });
