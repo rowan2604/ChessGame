@@ -1,3 +1,4 @@
+const opn = require('opn')
 const express = require('express');
 const app = express();
 const server = require('http').Server(app);
@@ -30,3 +31,4 @@ io.on('connection', socket => {
 })
 
 server.listen(0905);
+opn('http://localhost:905/')
