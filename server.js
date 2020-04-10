@@ -1,5 +1,18 @@
-const io = require('socket.io')(0905)
+const express = require('express');
+const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+
 let numberPlayer = 0;
+
+//---------------------------------- Express ---------------------------------//
+
+app.use(express.static(__dirname + '/static'));
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/index.html');
+});
+
+//---------------------------------- Server ----------------------------------//
 
 io.on('connection', socket => {
     console.log("new connection");
@@ -15,3 +28,5 @@ io.on('connection', socket => {
         socket.broadcast.emit('play', data);
     });
 })
+
+server.listen(0905);

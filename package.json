@@ -17,6 +17,7 @@
   },
   "homepage": "https://gitlab.com/les-echecs/projet-javascript#readme",
   "dependencies": {
+    "express": "^4.17.1",
     "socketio": "^1.0.0"
   }
 }
