@@ -1,45 +1,47 @@
 let move = (function() {
     let hasPlayed = false;
     const directions = {
-        diagonally,
-        vertically,
-        horizontally
+        none: -1,
+        topLeftDiagonally: 0,
+        topRightDiagonally: 1,
+        vertically: 2,
+        horizontally: 3
     };
 
-    let getDirection = (pawn, finalPosition) => {
-
+    let getDirection = (initialPosition, finalPosition) => {
+        let direction = directions.none;
 
     }
 
-    function playDiagonally(pawn, finalPosition) {
+    function playDiagonally(initialPosition, finalPosition) {
+        
+        return true;
+    }
+
+    function playVertically(initialPosition, finalPosition) {
 
         return true;
     }
 
-    function playVertically(pawn, finalPosition) {
-
-        return true;
-    }
-
-    function playHorizontally(pawn, finalPosition) {
+    function playHorizontally(initialPosition, finalPosition) {
 
         return true;
     }
 
     return {
-        play(pawn, finalPosition) {
-            let move = getDirection(pawn, finalPosition);
+        play(initialPosition, finalPosition) {
+            let move = getDirection(initialPosition, finalPosition);
             switch(move) {
                 case directions.diagonally:
-                    hasPlayed = playDiagonally(pawn, finalPosition)
+                    hasPlayed = playDiagonally(initialPosition, finalPosition)
                     break;
 
                 case directions.vertically:
-                    hasPlayed = playVertically(pawn, finalPosition);
+                    hasPlayed = playVertically(initialPosition, finalPosition);
                     break;
 
                 case directions.horizontally:
-                    hasPlayed = playHorizontally(pawn, finalPosition);
+                    hasPlayed = playHorizontally(initialPosition, finalPosition);
                     break;
 
                 default:    //si les mouvements ne sont pas valides le joueur ne joue pas
@@ -51,14 +53,18 @@ let move = (function() {
 })();
 
 let board = [
-    1, 1, 1, 1, 1, 1, 1, 1,
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    1, 1, 1, 1, 1, 1, 1, 1
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0], 
+    [0, 0, 0, 0, 0, 0, 0, 0], 
+    [0, 0, 0, 0, 0, 0, 0, 0], 
+    [0, 0, 0, 0, 0, 0, 0, 0], 
+    [0, 0, 0, 0, 0, 0, 0, 0], 
+    [0, 0, 0, 0, 0, 0, 0, 0], 
+    [1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
-move.diagonally(4, 23);
+board[2][6] = 4;
+board[0][4] = 3;
+
+console.log(board);
+move.play(4, 23);
