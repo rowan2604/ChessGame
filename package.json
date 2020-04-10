@@ -2,10 +2,8 @@
   "name": "chess",
   "version": "1.0.0",
   "description": "chess game - js project",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "app.js",
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://gitlab.com/les-echecs/projet-javascript.git"
@@ -17,6 +15,8 @@
   },
   "homepage": "https://gitlab.com/les-echecs/projet-javascript#readme",
   "dependencies": {
+    "express": "^4.17.1",
+    "opn": "^6.0.0",
     "socketio": "^1.0.0"
   }
 }
