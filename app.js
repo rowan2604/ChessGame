@@ -21,7 +21,12 @@ io.on('connection', socket => {
     socket.on('username', data => {
         socket.username = data;
         numberPlayer++;
-        console.log(socket.username);
+        if(numberPlayer == 2){
+            io.emit('setup', "start");
+        }
+        else {
+            socket.emit('setup', "wait");
+        }
     });
 
     socket.on('play', data => {
