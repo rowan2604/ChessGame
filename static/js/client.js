@@ -17,6 +17,9 @@ class Client{
                 document.getElementById("Connection").style.visibility = "hidden";
                 document.getElementById("Wait").style.visibility = "visible";
             }
+            else if(data == "full"){
+                alert("A game has already started...");
+            }
             else {
                 username.push(data);
                 document.getElementById("Connection").style.visibility = "hidden";

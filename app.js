@@ -19,14 +19,19 @@ app.get('/', function (req, res) {
 
 io.on('connection', socket => {
     socket.on('username', data => {
-        username.push(data);
-        numberPlayer++;
-        if(numberPlayer == 2){
-            socket.emit('setup', username[0]);
-            socket.broadcast.emit('setup', username[1]);
+        if(numberPlayer < 2){
+            numberPlayer++;
+            username.push(data);
+            if(numberPlayer == 2){
+                socket.emit('setup', username[0]);
+                socket.broadcast.emit('setup', username[1]);
+            }
+            else {
+                socket.emit('setup', "wait");
+            }
         }
         else {
-            socket.emit('setup', "wait");
+            socket.emit('setup', "full");
         }
     });
 
