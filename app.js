@@ -3,8 +3,10 @@ const express = require('express');
 const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+const mysql = require('mysql');
 
 let numberPlayer = 0;
+let username = [];
 
 //---------------------------------- Express ---------------------------------//
 
@@ -16,13 +18,12 @@ app.get('/', function (req, res) {
 //---------------------------------- Server ----------------------------------//
 
 io.on('connection', socket => {
-    console.log("new connection");
-
     socket.on('username', data => {
-        socket.username = data;
+        username.push(data);
         numberPlayer++;
         if(numberPlayer == 2){
-            io.emit('setup', "start");
+            socket.emit('setup', username[0]);
+            socket.broadcast.emit('setup', username[1]);
         }
         else {
             socket.emit('setup', "wait");
@@ -37,3 +38,7 @@ io.on('connection', socket => {
 
 server.listen(0905);
 opn('http://localhost:905/')
+
+//---------------------------------- mySql ---------------------------------//
+
+//Juan here

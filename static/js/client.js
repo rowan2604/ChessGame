@@ -17,10 +17,12 @@ class Client{
                 document.getElementById("Connection").style.visibility = "hidden";
                 document.getElementById("Wait").style.visibility = "visible";
             }
-            else if (data=="start"){
+            else {
+                username.push(data);
                 document.getElementById("Connection").style.visibility = "hidden";
                 document.getElementById("Wait").style.visibility = "hidden";
                 document.getElementById("Phaser").style.visibility = "visible";
+                console.log(username);
             }
         })
     }
