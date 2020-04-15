@@ -38074,6 +38074,8 @@ Phaser.Game.prototype = {
                     args.push('color: #959595; background: #fff');
                 }
             }
+
+            console.log.apply(console, args);
         }
         else if (window.console)
         {
