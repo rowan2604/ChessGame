@@ -46,7 +46,7 @@ class Grid{
         }
         // Place all the grid on the screen 
         this.graphics.x = 200;
-        this.graphics.y = 200;
+        this.graphics.y = 50;
     }
 
     getSelectedPiece(x, y){

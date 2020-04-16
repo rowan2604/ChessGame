@@ -1,4 +1,4 @@
-let game = new Phaser.Game(1000, 1000, Phaser.AUTO, 'Phaser', { preload: preload, create: create, update: update, render: render }); 
+let game = new Phaser.Game(900, 600, Phaser.AUTO, 'Phaser', { preload: preload, create: create, update: update, render: render }); 
 
 let black_tile;
 let white_tile;
