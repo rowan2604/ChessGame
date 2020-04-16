@@ -28,4 +28,17 @@ function elements(){
  
     })
 }
-//console.log(username.value);
+function signIN(){
+    document.getElementById("signIN").addEventListener("click",function(e){
+        elements();
+        //créer un compte en bdd
+    })
+}
+
+function signUP(){
+    document.getElementById("signUP").addEventListener("click",function(e){
+        elements();
+        //comparer avec les comptes initialement créer
+    })
+
+}

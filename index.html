@@ -14,7 +14,7 @@
         <div id="Connection" style="visibility: visible;">
             <div class="dropdown-menu-right float-right">
                 <img type="button" src="img/account.png" width="40" height="40" class="d-inline-block align-top mr-3 mt-3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></img>
-                <div class="dropdown-menu" id="informations" >
+                <div class="dropdown-menu"  >
                     <form class="px-3" id="informations">
                       <div class="form-group">
                         <label>Username:</label>
@@ -27,8 +27,8 @@
                     </form>
                     <p style="color : red;" id="error"></p>
                     <div class="dropdown-divider"></div>
-                    <button class="btn btn-success ml-4" onclick="elements()" >Sign in</button>
-                    <button class="btn btn-primary float-right mr-4">Sign up</button>
+                    <button class="btn btn-success ml-4"  id="signIN" onclick="signIN()" >Sign in</button>
+                    <button class="btn btn-primary float-right mr-4" id="signUP" onclick="signUP()" id>Sign up</button>
                   </div>
             </div>
 
