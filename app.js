@@ -46,19 +46,15 @@ opn('http://localhost:905/')
 
 //---------------------------------- mySql ---------------------------------//
 
-//Juan here
-
 var mysqlConfig = mysql.createConnection({
     host:'localhost',
     user:'root',
     password:'',
     database:'mydb',
 });
- //after created database and a tabledb inside...
-// connection to sql databse
 
 mysqlConfig.connect((err)=>{
-    if(!err) console.log('connection succed.');
-    else console.log('failed');
+    if(!err) console.log('Connection SQL succed.');
+    else console.log('Connection SQL failed');
 
 });
