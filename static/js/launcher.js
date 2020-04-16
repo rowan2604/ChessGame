@@ -30,14 +30,16 @@ function elements(){
 }
 function signIN(){
     document.getElementById("signIN").addEventListener("click",function(e){
-        elements();
+        //elements();
+        console.log("rowan ntm et connecte toi");
         //créer un compte en bdd
     })
 }
 
 function signUP(){
     document.getElementById("signUP").addEventListener("click",function(e){
-        elements();
+        console.log("rowan t un connard mais ca marche ");
+        //elements();
         //comparer avec les comptes initialement créer
     })
 
