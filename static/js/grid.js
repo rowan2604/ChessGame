@@ -109,6 +109,7 @@ class Grid{
                 
                 this.selectedPiece = undefined;
                 this.turn == 0 ? this.turn = 1 : this.turn = 0;     // Swap turn
+                console.log("Player turn:" + this.turn)
             }
             
             //console.log(this.selectedPiece);
