@@ -16,14 +16,15 @@ class Grid{
         this.initGrid();
 
         this.state = [                              //-1: no piece spaces else, unique ID of each pieces
-            0, 1, 2, 3, 4, 5, 6, 7,
-            8, 9, 10, 11, 12, 13, 14, 15, 
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1, 
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            16, 17, 18, 19, 20, 21, 22, 23, 
-            24, 25, 26, 27, 28, 29, 30, 31 ];
+            [0, 1, 2, 3, 4, 5, 6, 7],
+            [8, 9, 10, 11, 12, 13, 14, 15],
+            [-1, -1, -1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1, -1, -1],
+            [16, 17, 18, 19, 20, 21, 22, 23],
+            [24, 25, 26, 27, 28, 29, 30, 31]
+            ];
         
     }
 
@@ -50,7 +51,7 @@ class Grid{
     }
 
     getSelectedPiece(x, y){
-        let pieceID = this.state[y*8+x];
+        let pieceID = this.state[y][x];
         if(pieceID != -1){
             return this.pieces[pieceID];
         }
@@ -67,52 +68,59 @@ class Grid{
     }
 
     update(){
-        // Updates the piecs of the grid
-        for(let i = 0; i < this.pieces.length/2; i++){
-            if(this.turn == 0){
-                this.pieces[i].update();
-            }
-            else{
-                this.pieces[15+i].update();
-            }
+        // Updates the pieces of the grid
+        for(let i = 0; i < this.pieces.length; i++){
+            this.pieces[i].update();
         }
 
         if(this.justClicked){                                       // Code exec when player clicked on a tile
             let tmp = this.getSelectedPiece(this.lastClickCoord.x, this.lastClickCoord.y);       // Represents the piece we just clicked on (If selectable).
             if(tmp != undefined){
                 if(this.turn == 0 && tmp.getColor() == 'black'){           // White player can't select a black piece.
-                    tmp = tmp;
+                    if(tmp != this.selectedPiece){
+                        this.selectedPiece = tmp;
+                    }
+                    else if(tmp == this.selectedPiece){
+                        this.selectedPiece = undefined;
+                    }
                 }
                 else if(this.turn == 1 && tmp.getColor() == 'white'){
-                    tmp = tmp;
-                }
-                else{
-                    tmp = undefined;
-                }
-                // Selection piece depending on the team
-                if(tmp != this.selectedPiece){
-                    this.selectedPiece = tmp;
-                }
-                else if(tmp == this.selectedPiece){
-                    this.selectedPiece = undefined;
+                    if(tmp != this.selectedPiece){
+                        this.selectedPiece = tmp;
+                    }
+                    else if(tmp == this.selectedPiece){
+                        this.selectedPiece = undefined;
+                    }
                 }
             }
             // move the piece
-            if(tmp == undefined && this.selectedPiece != undefined){
-                // swap the ids in state element
-                let a = this.state[this.lastClickCoord.y*8+this.lastClickCoord.y];
-                let b = this.state[this.selectedPiece.getPosition().y*8+this.selectedPiece.getPosition().x];
-                this.state[this.lastClickCoord.y*8+this.lastClickCoord.x] = b;
-                this.state[this.selectedPiece.getPosition().y*8+this.selectedPiece.getPosition().x] = a;
-                // Move action
-                this.selectedPiece.setPosition(this.lastClickCoord.x, this.lastClickCoord.y);
-                
-                this.selectedPiece = undefined;
-                this.turn == 0 ? this.turn = 1 : this.turn = 0;     // Swap turn
-                console.log("Player turn:" + this.turn)
+            if(this.selectedPiece != undefined){
+                if(tmp == undefined){
+                    // swap the ids in state element
+                    let a = this.state[this.lastClickCoord.y][this.lastClickCoord.x];
+                    let b = this.state[this.selectedPiece.getPosition().y][this.selectedPiece.getPosition().x];
+                    this.state[this.lastClickCoord.y][this.lastClickCoord.x] = b;
+                    this.state[this.selectedPiece.getPosition().y][this.selectedPiece.getPosition().x] = a;
+                    // Move action
+                    this.selectedPiece.setPosition(this.lastClickCoord.x, this.lastClickCoord.y);
+                    this.selectedPiece = undefined;
+                    this.turn == 0 ? this.turn = 1 : this.turn = 0;     // Swap turn
+                    console.log("Player turn: " + this.turn)
+                }
+                else if(tmp.getColor() != this.selectedPiece.getColor()){       // If we are on the tile of an ennemy team...
+                    this.state[this.lastClickCoord.y][this.lastClickCoord.x] = this.state[this.selectedPiece.getPosition().y][this.selectedPiece.getPosition().x];
+                    // Replace old location by -1
+                    this.state[this.selectedPiece.getPosition().y][this.selectedPiece.getPosition().x] = -1;
+                    // Move action
+                    // Kill the other piece
+                    tmp.kill();
+                    this.selectedPiece.setPosition(this.lastClickCoord.x, this.lastClickCoord.y);
+                    this.selectedPiece = undefined;
+                    this.turn == 0 ? this.turn = 1 : this.turn = 0;     // Swap turn
+                    console.log("Player turn: " + this.turn)
+                }
+
             }
-            
-            //console.log(this.selectedPiece);
             this.justClicked = false;
         }
     }

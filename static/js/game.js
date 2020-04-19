@@ -12,6 +12,7 @@ function preload() {+
 }
 
 function create() {
+    game.physics.startSystem(Phaser.Physics.ARCADE);
     game.stage.backgroundColor = '#CD9261';
 
     grid = new Grid(pieces);
