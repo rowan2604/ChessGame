@@ -5,7 +5,7 @@ let white_tile;
 let grid;
 let pieces = [];
 
-function preload() {
+function preload() {+
     game.load.image('black_tile', '../assets/black_tile.png');
     game.load.image('white_tile', '../assets/white_tile.png');
     game.load.spritesheet('pieces', '../assets/pieces2.png', 64, 64, 12);
