@@ -116,8 +116,19 @@ var mysqlConfig = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'mydb',
+    //database: 'mydb',
 });
+
+
+/*mysqlConfig.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+    mysqlConfig.query("CREATE DATABASE mydb", function (err, result) {
+      if (err) throw err;
+      console.log("Database created");
+    });
+  });*/
+
 
 mysqlConfig.connect(function (err) {
     if (err) {
@@ -125,3 +136,11 @@ mysqlConfig.connect(function (err) {
     }
     console.log("DB Connected");
 });
+
+/*mysqlConfig.connect(function(err) {
+    var sql = "CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255), password VARCHAR(255))";
+    mysqlConfig.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log("Table created");
+    });
+  });*/
