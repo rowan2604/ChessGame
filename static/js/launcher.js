@@ -31,8 +31,6 @@ function elements() {
 
 function signIN() {
     document.getElementById("signIN").addEventListener("click", function (e) {
-        //elements();
-        // console.log("connecte toi");
         //créer un compte en bdd
         var username = document.getElementById("input_username").value;
         var password = document.getElementById("input_password").value;

@@ -113,21 +113,11 @@ opn('http://localhost:905/')
 //---------------------------------- mySql ---------------------------------//
 
 var mysqlConfig = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    //database: 'mydb',
+    host: 'sql7.freemysqlhosting.net',
+    user: 'sql7334491',
+    password: 'VgwJqqpjkc',
+    database: 'sql7334491',
 });
-
-
-/*mysqlConfig.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-    mysqlConfig.query("CREATE DATABASE mydb", function (err, result) {
-      if (err) throw err;
-      console.log("Database created");
-    });
-  });*/
 
 
 mysqlConfig.connect(function (err) {
@@ -137,10 +127,3 @@ mysqlConfig.connect(function (err) {
     console.log("DB Connected");
 });
 
-/*mysqlConfig.connect(function(err) {
-    var sql = "CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255), password VARCHAR(255))";
-    mysqlConfig.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log("Table created");
-    });
-  });*/
