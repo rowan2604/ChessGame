@@ -31,8 +31,6 @@ function elements() {
 
 function signIN() {
     document.getElementById("signIN").addEventListener("click", function (e) {
-        //elements();
-        // console.log("rowan ntm et connecte toi");
         //créer un compte en bdd
         var username = document.getElementById("input_username").value;
         var password = document.getElementById("input_password").value;
@@ -58,7 +56,7 @@ function signIN() {
 
 function signUP() {
     document.getElementById("signUP").addEventListener("click", function (e) {
-        // console.log("rowan t un connard mais ca marche ");
+        // console.log(" ca marche ");
         var username = document.getElementById("input_username").value;
         var password = document.getElementById("input_password").value;
         var body = {
