@@ -25,7 +25,6 @@
                         <input id="input_password" type="password" name="pass" class="form-control" placeholder="password" >
                       </div>
                     </form>
-                    <p style="color : red;" id="error"></p>
                     <div class="dropdown-divider"></div>
                     <button class="btn btn-success ml-4"  id="signIN" onclick="signIN()" >Sign in</button>
                     <button class="btn btn-primary float-right mr-4" id="signUP" onclick="signUP()" id>Sign up</button>
@@ -33,7 +32,7 @@
             </div>
 
               <h1 id="title" class="text-white">Chess tournament</h1>
-              <button id="playB" class="btn btn-success btn-lg btn-block">Play as a guest</button>
+              <button id="playB" class="btn btn-success btn-lg btn-block">Play as </button id="name">
 
             <div id="debug" style="visibility:hidden">
                 <form id="logF" onsubmit="return false">
@@ -59,7 +58,6 @@
     <script src="js/launcher.js"></script>
     <script src="js/phaser.js"></script>
     <script src="js/game.js"></script>
-    <script src="app.js"></script>
     <script src="js/grid.js"></script>
     <script src="js/piece.js"></script>
 
