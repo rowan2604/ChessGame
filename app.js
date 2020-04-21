@@ -68,10 +68,11 @@ app.get('/', function (req, res) {
 });
 
 var myRouter = express.Router();
-
+// on creer un chemin de routage pour sign up
 myRouter.route('/signup')
     .post(function (req, res) {
         var body = JSON.parse(req.body);
+        // on verifie l'existence de l'username dans la bdd pour la creation du compte
         var query_verifuser = "SELECT * FROM users WHERE username='" + body.username + "'";
         mysqlConfig.query(query_verifuser, function (err, result) {
             if (err) {
@@ -81,6 +82,7 @@ myRouter.route('/signup')
                 });
             } else {
                 if (result.length == 0) {
+                   // on l'ajoute a la bdd
                     var query_signup = "INSERT INTO users (username, password) VALUES ('" + body.username + "', '" + body.password + "')";
                     mysqlConfig.query(query_signup, function (err, result) {
                         if (err) {
@@ -104,9 +106,11 @@ myRouter.route('/signup')
         });
 
     });
+    // on creer un chemin de routage pour sign in
 myRouter.route('/signin')
     .post(function (req, res) {
         var body = JSON.parse(req.body);
+    // on verfier le nom de l'utilisitaur avec son mot de passe et on affiche un message correspendant       
         var query_verifuser = "SELECT * FROM users WHERE username='" + body.username + "' AND password='" + body.password + "'";
         mysqlConfig.query(query_verifuser, function (err, result) {
             if (err) {
@@ -129,4 +133,70 @@ myRouter.route('/signin')
 
     });
 
+<<<<<<< HEAD
 app.use(myRouter);
+
+//---------------------------------- Server ----------------------------------//
+
+io.on('connection', socket => {
+    socket.on('username', data => {
+        if (numberPlayer < 2) {
+            numberPlayer++;
+            username.push(data);
+            if (numberPlayer == 2) {
+                socket.emit('setup', username[0]);
+                socket.broadcast.emit('setup', username[1]);
+            } else {
+                socket.emit('setup', "wait");
+            }
+        } else {
+            socket.emit('setup', "full");
+        }
+    });
+
+    socket.on('play', data => {
+        console.log(socket.username + data);
+        socket.broadcast.emit('play', data);
+    });
+})
+
+server.listen(0905);
+opn('http://localhost:905/')
+
+//---------------------------------- mySql ---------------------------------//
+
+var mysqlConfig = mysql.createConnection({
+    host: 'sql7.freemysqlhosting.net',
+    user: 'sql7334491',
+    password: 'VgwJqqpjkc',
+    database: 'sql7334491',
+});
+
+
+/*mysqlConfig.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+    mysqlConfig.query("CREATE DATABASE mydb", function (err, result) {
+      if (err) throw err;
+      console.log("Database created");
+    });
+  });*/
+
+
+mysqlConfig.connect(function (err) {
+    if (err) {
+        throw err;
+    }
+    console.log("DB Connected");
+});
+
+/*mysqlConfig.connect(function(err) {
+    var sql = "CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255), password VARCHAR(255))";
+    mysqlConfig.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log("Table created");
+    });
+  });*/
+=======
+app.use(myRouter);
+>>>>>>> 6631e9cef44755c518308072bd0b01a0444cadc1
