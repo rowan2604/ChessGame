@@ -13,6 +13,7 @@ class Piece{
         // Utilities
         this.tile_dimension = game.cache.getImage('white_tile').width;
         this.firstMove = true;
+        this.test = 0;
         
     }
 
@@ -53,15 +54,21 @@ class Piece{
         // Stops the sprite 
         if(this.isMoving && this.sprite.y <= (this.tile_dimension*this.coord.y + grid.graphics.y + 2) && this.sprite.y > (this.tile_dimension*this.coord.y + grid.graphics.y - 2)){
             if(this.sprite.x <= (this.tile_dimension*this.coord.x + grid.graphics.x + 2) && this.sprite.x > (this.tile_dimension*this.coord.x + grid.graphics.x - 2)){
-                console.log(this.id);
-                this.sprite.body.velocity.x = 0;
-                this.sprite.body.velocity.y = 0;
-                console.log(this.sprite.x);
-                console.log(this.sprite.y);
+                //console.log(this.id);
+                this.sprite.body.velocity.setTo(0, 0);
+                
                 this.sprite.x = this.tile_dimension*this.coord.x + grid.graphics.x;
                 this.sprite.y = this.tile_dimension*this.coord.y + grid.graphics.y;
+                console.log(this.sprite.x);
+                console.log(this.sprite.y);
                 this.isMoving = false;
+                this.test = 2;
             }
+        }
+        if(this.test > 0){
+            console.log(this.sprite.x);
+            console.log(this.sprite.y);
+            this.test--;
         }
     }
 }

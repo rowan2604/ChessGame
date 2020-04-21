@@ -50,6 +50,13 @@ class Grid{
         this.graphics.y = 50;
     }
 
+    getPosition(){
+        let coord = {};
+        coord.x = this.graphics.x;
+        coord.y = this.graphics.y;
+        return coord;
+    }
+
     getSelectedPiece(x, y){
         let pieceID = this.state[y][x];
         if(pieceID != -1){

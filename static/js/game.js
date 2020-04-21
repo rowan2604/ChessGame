@@ -1,4 +1,4 @@
-let game = new Phaser.Game(900, 600, Phaser.AUTO, 'Phaser', { preload: preload, create: create, update: update, render: render }); 
+let game = new Phaser.Game(1000, 700, Phaser.AUTO, 'Phaser', { preload: preload, create: create, update: update, render: render }); 
 
 let black_tile;
 let white_tile;
@@ -16,6 +16,12 @@ function create() {
     game.stage.backgroundColor = '#CD9261';
 
     grid = new Grid(pieces);
+
+    let columns_id = game.add.text(grid.getPosition().x + 32, grid.getPosition().y + 4 + grid.graphics.height, '', {font: "16px Arial", fontStyle: 'bold', fill: "#000000", tabs: 64});
+    let lines_id = game.add.text(grid.getPosition().x - 20, grid.getPosition().y + 26, '8\n7\n6\n5\n5\n3\n2\n1', {font: "16px Arial", fontStyle: 'bold', fill: "#000000"});
+    let numbers = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+    columns_id.parseList(numbers);
+    lines_id.lineSpacing = 40;
 
     initPieces();
 
