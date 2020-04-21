@@ -12,6 +12,54 @@ let username = [];
 //---------------------------------- Express ---------------------------------//
 
 app.use(express.static(__dirname + '/static'));
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + '/index.html');
+});
+
+//---------------------------------- Server ----------------------------------//
+
+io.on('connection', socket => {
+    socket.on('username', data => {
+        if (numberPlayer < 2) {
+            numberPlayer++;
+            username.push(data);
+            if (numberPlayer == 2) {
+                socket.emit('setup', username[0]);
+                socket.broadcast.emit('setup', username[1]);
+            } else {
+                socket.emit('setup', "wait");
+            }
+        } else {
+            socket.emit('setup', "full");
+        }
+    });
+
+    socket.on('play', data => {
+        console.log(socket.username + data);
+        socket.broadcast.emit('play', data);
+    });
+})
+
+server.listen(0905);
+opn('http://localhost:905/')
+
+//---------------------------------- mySql ---------------------------------//
+
+var mysqlConfig = mysql.createConnection({
+    host: 'sql7.freemysqlhosting.net',
+    user: 'sql7334491',
+    password: 'VgwJqqpjkc',
+    database: 'sql7334491',
+});
+
+
+mysqlConfig.connect(function (err) {
+    if (err) {
+        throw err;
+    }
+});
+
+app.use(express.static(__dirname + '/static'));
 app.use(bodyParser.text({
     type: "application/json"
 }));
@@ -85,6 +133,7 @@ myRouter.route('/signin')
 
     });
 
+<<<<<<< HEAD
 app.use(myRouter);
 
 //---------------------------------- Server ----------------------------------//
@@ -148,3 +197,6 @@ mysqlConfig.connect(function (err) {
       console.log("Table created");
     });
   });*/
+=======
+app.use(myRouter);
+>>>>>>> 6631e9cef44755c518308072bd0b01a0444cadc1

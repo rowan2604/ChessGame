@@ -31,14 +31,12 @@ function elements() {
 
 function signIN() {
     document.getElementById("signIN").addEventListener("click", function (e) {
-        //elements();
-        // console.log("connecte toi");
         //créer un compte en bdd
         var username = document.getElementById("input_username").value;
         var password = document.getElementById("input_password").value;
         var body = {
             username: username,
-            password: password
+            password: password,
         };
         const Http = new XMLHttpRequest();
         Http.open('post', '/signin');
@@ -71,7 +69,7 @@ function signUP() {
         Http.send(JSON.stringify(body));
         Http.onload = function () {
             if (Http.status == 200) {
-                alert('Inscription Reussie')
+                alert('Inscription Reussie , Veuillez vous connecter')
             } else {
                 var response = JSON.parse(Http.response);
                 if (response.error == 'username_already_used') {
@@ -90,4 +88,11 @@ function signUP() {
 
 
 
+}
+function name(){
+    document.getElementById("name").addEventListener('', function (e) {
+        signIN();
+        var username = document.getElementById("input_username").value;
+        print(username);
+    });
 }
