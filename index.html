@@ -8,6 +8,7 @@
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="css/index.css">
+        <link rel="icon" href="img/favico.png" />
     </head>
 
     <body>
@@ -15,7 +16,7 @@
             <div class="dropdown-menu-right float-right">
                 <img type="button" src="img/account.png" width="40" height="40" class="d-inline-block align-top mr-3 mt-3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></img>
                 <div class="dropdown-menu"  >
-                    <form class="px-3" id="informations">
+                    <form class="px-3">
                       <div class="form-group">
                         <label>Username:</label>
                         <input id="input_username" type="text" name="user" class="form-control" placeholder="username" >
@@ -25,24 +26,16 @@
                         <input id="input_password" type="password" name="pass" class="form-control" placeholder="password" >
                       </div>
                     </form>
-                    <p style="color : red;" id="error"></p>
                     <div class="dropdown-divider"></div>
-                    <button class="btn btn-success ml-4"  id="signIN" onclick="signIN()" >Sign in</button>
-                    <button class="btn btn-primary float-right mr-4" id="signUP" onclick="signUP()" id>Sign up</button>
+                    <button class="btn btn-success ml-4"  id="signIN">Sign in</button>
+                    <button class="btn btn-primary float-right mr-4" id="signUP">Sign up</button>
                   </div>
             </div>
 
               <h1 id="title" class="text-white">Chess tournament</h1>
-              <button id="playB" class="btn btn-success btn-lg btn-block">Play as a guest</button>
+              <button id="playB" class="btn btn-success btn-lg btn-block">Play as </button>
 
-            <div id="debug" style="visibility:hidden">
-                <form id="logF" onsubmit="return false">
-                    <input type="text" id="usernameI">
-                    <button type="submit" id="logB">Log</button>
-                </form>
-            </div>
-
-            <div id="Wait">
+            <div id="Wait"> 
               <img src="img/walk.gif" id="gifW">
               <h2 id="waitingT">Please wait while we find another player...</h2>
             </div>
@@ -60,7 +53,10 @@
     <script src="js/phaser.js"></script>
     <script src="js/movements.js"></script>
     <script src="js/game.js"></script>
-    <script src="app.js"></script>
+<<<<<<< HEAD
+  
+=======
+>>>>>>> 6631e9cef44755c518308072bd0b01a0444cadc1
     <script src="js/grid.js"></script>
     <script src="js/piece.js"></script>
 
