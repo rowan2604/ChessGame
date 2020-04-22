@@ -3,7 +3,11 @@ document.getElementById('playB').addEventListener("click", function () {
     console.log(username[0]);
 })
 
+<<<<<<< HEAD
 document.getElementById("signIN").addEventListener("click", function () {
+=======
+document.getElementById("signIN").addEventListener("click", function (e) {
+>>>>>>> 753ffaf20921bec9494277ecb88e21084f4cd076
     let username = document.getElementById("input_username").value;
     let password = document.getElementById("input_password").value;
     let body = {
@@ -16,15 +20,23 @@ document.getElementById("signIN").addEventListener("click", function () {
     Http.send(JSON.stringify(body));
     Http.onload = function () {
         if (Http.status == 200) {
+<<<<<<< HEAD
             alert('Welcome  '+ body.username)
+=======
+            alert('Welcome  '+ username)
+>>>>>>> 753ffaf20921bec9494277ecb88e21084f4cd076
         } else {
             alert('username or password incorrect')
         }
     };
 })
 
+
 document.getElementById("signUP").addEventListener("click", function (e) {
+<<<<<<< HEAD
     // console.log(" ca marche ");
+=======
+>>>>>>> 753ffaf20921bec9494277ecb88e21084f4cd076
     let username = document.getElementById("input_username").value;
     let password = document.getElementById("input_password").value;
     let body = {
@@ -39,11 +51,11 @@ document.getElementById("signUP").addEventListener("click", function (e) {
         if (Http.status == 200) {
             alert('Inscription Reussie')
         } else {
-            var response = JSON.parse(Http.response);
+            let response = JSON.parse(Http.response);
             if (response.error == 'username_already_used') {
                 alert('le username est deja utilisé')
             } else {
-                alert('une erreur est survenue')
+                alert('une erreur est survenue , veuillez changer vos coordonnés.')
             }
         }
     }
