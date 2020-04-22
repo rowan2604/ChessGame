@@ -13,6 +13,7 @@ class Piece{
         // Utilities
         this.tile_dimension = game.cache.getImage('white_tile').width;
         this.firstMove = true;
+        this.tween = undefined;
         
     }
 
@@ -23,12 +24,8 @@ class Piece{
         else{
             this.coord.x = x;
             this.coord.y = y;
-            /*this.sprite.x = this.tile_dimension*x + grid.graphics.x;
-            this.sprite.y = this.tile_dimension*y + grid.graphics.y;
-            console.log(this.sprite.x);
-            console.log(this.sprite.y);*/
-            game.physics.arcade.moveToXY(this.sprite, this.tile_dimension*x + grid.graphics.x, this.tile_dimension*y + grid.graphics.y, 200);
-            this.isMoving = true;
+            this.tween = game.add.tween(this.sprite).to({x: this.tile_dimension*x + grid.graphics.x, y: this.tile_dimension*y + grid.graphics.y}, 500);
+            this.tween.start();
         }
     }
 
@@ -50,18 +47,12 @@ class Piece{
     }
     
     update(){
-        // Stops the sprite 
-        if(this.isMoving && this.sprite.y <= (this.tile_dimension*this.coord.y + grid.graphics.y + 3) && this.sprite.y > (this.tile_dimension*this.coord.y + grid.graphics.y - 3)){
-            if(this.sprite.x <= (this.tile_dimension*this.coord.x + grid.graphics.x + 3) && this.sprite.x > (this.tile_dimension*this.coord.x + grid.graphics.x - 3)){
-                //console.log(this.id);
-                this.sprite.body.velocity.setTo(0, 0);
-                
-                this.sprite.x = this.tile_dimension*this.coord.x + grid.graphics.x;
-                this.sprite.y = this.tile_dimension*this.coord.y + grid.graphics.y;
-                /*console.log(this.sprite.x);
-                console.log(this.sprite.y);*/
-                this.isMoving = false;
-            }
+        // Stops the sprite
+        if(this.tween.isRunning){
+            grid.allowMoving = false;
+        }
+        else{
+            grid.allowMoving = true;
         }
     }
 }
