@@ -24,8 +24,10 @@ function create() {
     columns_id.parseList(numbers);
     lines_id.lineSpacing = 40;
 
-    winner_text = game.add.text(grid.getPosition().x, grid.getPosition().y, '', {font: "16px Arial", fontStyle: 'bold', fill: "#000000"});
+    winner_text = game.add.text(grid.getPosition().x, grid.getPosition().y + 30, '', {font: "16px Arial", fontStyle: 'bold', fill: "#000000"});
     winner_text.anchor.setTo(0.5, 0.5);
+    winner_text.x = grid.getPosition().x + grid.getSize().width/2.
+    winner_text.y = grid.getPosition().y + grid.getSize().height; 
     
 
     initPieces();
@@ -69,7 +71,6 @@ function initPieces(){
 
 function update() {
     grid.update();
-    console.log(grid.isPlaying);
     if(!grid.isPlaying){
         winner_text.text = grid.winner + " won the game";
     }
