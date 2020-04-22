@@ -27,22 +27,7 @@ class Piece{
             this.sprite.y = this.tile_dimension*y + grid.graphics.y;
             console.log(this.sprite.x);
             console.log(this.sprite.y);*/
-            game.physics.arcade.moveToXY(this.sprite, this.tile_dimension*x + grid.graphics.x, this.tile_dimension*y + grid.graphics.y, 0, 500);
-            game.time.events.add(500, function() {
-                this.sprite.body.velocity.setTo(0,0);
-                if(this.isMoving && this.sprite.y <= (this.tile_dimension*this.coord.y + grid.graphics.y + 2) && this.sprite.y > (this.tile_dimension*this.coord.y + grid.graphics.y - 2)){
-                    if(this.sprite.x <= (this.tile_dimension*this.coord.x + grid.graphics.x + 2) && this.sprite.x > (this.tile_dimension*this.coord.x + grid.graphics.x - 2)){
-                        console.log(this.id);
-                        this.sprite.body.velocity.x = 0;
-                        this.sprite.body.velocity.y = 0;
-                        console.log(this.sprite.x);
-                        console.log(this.sprite.y);
-                        this.sprite.x = this.tile_dimension*this.coord.x + grid.graphics.x;
-                        this.sprite.y = this.tile_dimension*this.coord.y + grid.graphics.y;
-                        this.isMoving = false;
-                    }
-                }
-            }, this);
+            game.physics.arcade.moveToXY(this.sprite, this.tile_dimension*x + grid.graphics.x, this.tile_dimension*y + grid.graphics.y, 0, 1000);
             this.isMoving = true;
         }
     }
@@ -66,18 +51,15 @@ class Piece{
     
     update(){
         // Stops the sprite 
-        /*
+        
         if(this.isMoving && this.sprite.y <= (this.tile_dimension*this.coord.y + grid.graphics.y + 2) && this.sprite.y > (this.tile_dimension*this.coord.y + grid.graphics.y - 2)){
             if(this.sprite.x <= (this.tile_dimension*this.coord.x + grid.graphics.x + 2) && this.sprite.x > (this.tile_dimension*this.coord.x + grid.graphics.x - 2)){
-                console.log(this.id);
-                this.sprite.body.velocity.x = 0;
-                this.sprite.body.velocity.y = 0;
-                console.log(this.sprite.x);
-                console.log(this.sprite.y);
+                this.sprite.body.velocity.setTo(0, 0);
+
                 this.sprite.x = this.tile_dimension*this.coord.x + grid.graphics.x;
                 this.sprite.y = this.tile_dimension*this.coord.y + grid.graphics.y;
                 this.isMoving = false;
             }
-        }*/
+        }
     }
 }

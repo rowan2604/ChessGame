@@ -357,6 +357,14 @@ function getAvailableMoves(selectedPiece, state) {
                 console.log("The type doesn't exist");
         }
     }
+
+    /*for (let i = 0; i < moves.length; i++) {
+        let move = moves[i];
+        if (state[move.y][move.x] == 3 || state[move.y][move.x] == 28) {
+            moves.splice(i,1);
+        }
+    }*/
+    console.log(moves);
     return moves;
 }
 
