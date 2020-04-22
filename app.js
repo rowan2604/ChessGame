@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 let numberPlayer = 0;
 let username = [];
 
+
 //---------------------------------- Express ---------------------------------//
 
 app.use(express.static(__dirname + '/static'));

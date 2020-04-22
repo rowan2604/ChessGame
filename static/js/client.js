@@ -28,6 +28,7 @@ class Client{
                 console.log(username);
             }
         })
+       
     }
 
     send(type, message){
