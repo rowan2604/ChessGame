@@ -17,6 +17,7 @@ document.getElementById("signIN").addEventListener("click", function () {
         if (Http.status == 200) {
             alert('Welcome  '+ body.username)
             users=body.username;
+            name.push(users);
         } else {
             alert('username or password incorrect')
         }
