@@ -53,12 +53,12 @@ let mysqlConfig = mysql.createConnection({
 });
 
 
-mysqlConfig.connect(function (err) {
+ mysqlConfig.connect(function (err) {
     if (err) {
         throw err;
     }
 });
-
+ 
 app.use(express.static(__dirname + '/static'));
 app.use(bodyParser.text({
     type: "application/json"
@@ -81,19 +81,10 @@ myRouter.route('/signup')
                     error: 'Error query_verifuser'
                 });
             } else {
-<<<<<<< HEAD
                 if (result.length == 0) {
                    // on l'ajoute a la bdd
                    if(body.username!='' && body.password!='' ){
-                    let query_signup = "INSERT INTO users (username, password) VALUES ('" + body.username + "', '" + body.password + "')";}
-=======
-                if (result.length == 0){ 
-                    if(body.username!=""&&body.password!=""){
-                        // on l'ajoute a la bdd
-                        let query_signup = "INSERT INTO users (username, password) VALUES ('" + body.username + "', '" + body.password + "')";
-                    }
-                     
->>>>>>> 753ffaf20921bec9494277ecb88e21084f4cd076
+                    var query_signup = "INSERT INTO users (username, password) VALUES ('" + body.username + "', '" + body.password + "')";}
                     mysqlConfig.query(query_signup, function (err, result) {
                         if (err) {
                             res.status(500);
