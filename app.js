@@ -5,6 +5,7 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const mysql = require('mysql');
 const bodyParser = require("body-parser");
+const movements = require('./static/js/movements.js');
 
 let numberPlayer = 0;
 let username = [];
@@ -32,6 +33,22 @@ io.on('connection', socket => {
             }
         } else {
             socket.emit('setup', "full");
+        }
+    });
+
+    socket.on('clicked', data => {
+        let availableMoves =  movements.getAvailableMoves(data.type, data.color, data.coordinates, data.isFirstMove, data.state);
+        let response = {
+            availableMoves: availableMoves,
+            state: data.state,
+            color: data.color,
+            size: data.size
+        };
+        socket.emit('draw', response);
+        let isMovePossible = movements.movementIsPossible(availableMoves, data.lastClickedCoordinates);
+        console.log(isMovePossible);
+        if (isMovePossible) {
+            socket.emit('move', data.lastClickedCoordinates);
         }
     });
 
