@@ -8,7 +8,7 @@ function getAvailableMoves(type, color, coordinates, isFirstMove, state) {
         case 'pawn':
             let coeff = (color == 'black') ? 1 : -1;
             tmpMoves = [{x: coordinates.x, y: coordinates.y + 1*coeff}];
-            if (isFirstMove) {
+            if (state[tmpMoves[0].y][tmpMoves[0].x] == -1 && isFirstMove) {
                 tmpMoves.push({x: coordinates.x, y: coordinates.y + 2*coeff});
             }
             let potentialCapture = [{x: coordinates.x - 1, y: coordinates.y + 1*coeff}, {x: coordinates.x + 1, y: coordinates.y + 1*coeff}];

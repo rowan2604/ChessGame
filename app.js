@@ -68,7 +68,6 @@ io.on('connection', socket => {
                 id: data.id,
                 lastClickedCoordinates: data.lastClickedCoordinates
             }
-            
             socket.emit('move', moveInfo);
             socket.broadcast.emit('move', moveInfo);
         }
