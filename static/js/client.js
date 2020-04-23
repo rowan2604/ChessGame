@@ -34,7 +34,6 @@ class Client{
             grid.graphicsAvailableMove.clear();
             drawAvailableMoves(data.availableMoves, data.state, grid.graphicsAvailableMove, data.color, data.size);
         });
-
         this.socket.on('move', data => {
             grid.pieces[data.id].setPosition(data.lastClickedCoordinates.x, data.lastClickedCoordinates.y);
             grid.pieces[data.id].firstMove = false;
