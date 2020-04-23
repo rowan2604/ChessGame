@@ -30,12 +30,12 @@ class Client{
         });
 
         this.socket.on('draw', data => {
-            console.log(data)
-            let graphics = game.add.graphics(200, 50);
-            drawAvailableMoves(data.availableMoves, data.state, graphics, data.color, data.size);
+            grid.graphicsAvailableMove.clear();
+            drawAvailableMoves(data.availableMoves, data.state, grid.graphicsAvailableMove, data.color, data.size);
         });
 
         this.socket.on('move', destination => {
+            grid.graphicsAvailableMove.clear();
             let i = 0;
             console.log("move")
         });

@@ -36,6 +36,17 @@ io.on('connection', socket => {
         }
     });
 
+    socket.state = [                              //-1: no piece spaces else, unique ID of each pieces
+        [0, 1, 2, 3, 4, 5, 6, 7],
+        [8, 9, 10, 11, 12, 13, 14, 15],
+        [-1, -1, -1, -1, -1, -1, -1, -1],
+        [-1, -1, -1, -1, -1, -1, -1, -1],
+        [-1, -1, -1, -1, -1, -1, -1, -1],
+        [-1, -1, -1, -1, -1, -1, -1, -1],
+        [16, 17, 18, 19, 20, 21, 22, 23],
+        [24, 25, 26, 27, 28, 29, 30, 31]
+        ];
+
     socket.on('clicked', data => {
         let availableMoves =  movements.getAvailableMoves(data.type, data.color, data.coordinates, data.isFirstMove, data.state);
         let response = {
@@ -46,8 +57,12 @@ io.on('connection', socket => {
         };
         socket.emit('draw', response);
         let isMovePossible = movements.movementIsPossible(availableMoves, data.lastClickedCoordinates);
-        console.log(isMovePossible);
         if (isMovePossible) {
+            let a = socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
+            let b = socket.state[data.coordinates.y][data.coordinates.x];
+            socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = b;
+            socket.state[data.coordinates.y][data.coordinates.x] = a;
+            console.log(socket.state);
             socket.emit('move', data.lastClickedCoordinates);
         }
     });
