@@ -3,9 +3,9 @@ document.getElementById('playB').addEventListener("click", function () {
 })
 
 document.getElementById("signIN").addEventListener("click", function () {
-    var username = document.getElementById("input_username").value;
-    var password = document.getElementById("input_password").value;
-    var body = {
+    let username = document.getElementById("input_username").value;
+    let password = document.getElementById("input_password").value;
+    let body = {
         username: username,
         password: password
     };
@@ -15,7 +15,7 @@ document.getElementById("signIN").addEventListener("click", function () {
     Http.send(JSON.stringify(body));
     Http.onload = function () {
         if (Http.status == 200) {
-            alert('Welcome')
+            alert('Welcome  '+ body.username)
         } else {
             alert('username or password incorrect')
         }
@@ -24,9 +24,9 @@ document.getElementById("signIN").addEventListener("click", function () {
 
 document.getElementById("signUP").addEventListener("click", function (e) {
     // console.log(" ca marche ");
-    var username = document.getElementById("input_username").value;
-    var password = document.getElementById("input_password").value;
-    var body = {
+    let username = document.getElementById("input_username").value;
+    let password = document.getElementById("input_password").value;
+    let body = {
         username: username,
         password: password
     };

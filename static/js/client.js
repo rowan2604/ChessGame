@@ -28,6 +28,18 @@ class Client{
                 console.log(username);
             }
         });
+
+        this.socket.on('draw', data => {
+            console.log(data)
+            let graphics = game.add.graphics(200, 50);
+            drawAvailableMoves(data.availableMoves, data.state, graphics, data.color, data.size);
+        });
+
+        this.socket.on('move', destination => {
+            let i = 0;
+            console.log("move")
+        });
+       
     }
 
     send(type, message){
