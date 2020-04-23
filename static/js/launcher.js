@@ -1,13 +1,8 @@
 document.getElementById('playB').addEventListener("click", function () {
     client.send('username', username[0]);
-    console.log(username[0]);
 })
 
-<<<<<<< HEAD
 document.getElementById("signIN").addEventListener("click", function () {
-=======
-document.getElementById("signIN").addEventListener("click", function (e) {
->>>>>>> 753ffaf20921bec9494277ecb88e21084f4cd076
     let username = document.getElementById("input_username").value;
     let password = document.getElementById("input_password").value;
     let body = {
@@ -20,11 +15,8 @@ document.getElementById("signIN").addEventListener("click", function (e) {
     Http.send(JSON.stringify(body));
     Http.onload = function () {
         if (Http.status == 200) {
-<<<<<<< HEAD
             alert('Welcome  '+ body.username)
-=======
-            alert('Welcome  '+ username)
->>>>>>> 753ffaf20921bec9494277ecb88e21084f4cd076
+            users=body.username;
         } else {
             alert('username or password incorrect')
         }
@@ -33,10 +25,7 @@ document.getElementById("signIN").addEventListener("click", function (e) {
 
 
 document.getElementById("signUP").addEventListener("click", function (e) {
-<<<<<<< HEAD
     // console.log(" ca marche ");
-=======
->>>>>>> 753ffaf20921bec9494277ecb88e21084f4cd076
     let username = document.getElementById("input_username").value;
     let password = document.getElementById("input_password").value;
     let body = {
