@@ -59,15 +59,32 @@ io.on('connection', socket => {
 
         let isMovePossible = movements.movementIsPossible(availableMoves, data.lastClickedCoordinates);
         if (isMovePossible) {
-            let a = socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
-            let b = socket.state[data.coordinates.y][data.coordinates.x];
-            socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = b;
-            socket.state[data.coordinates.y][data.coordinates.x] = a;
-            console.log(socket.state);
-            let moveInfo = {
-                id: data.id,
-                lastClickedCoordinates: data.lastClickedCoordinates
+            let moveInfo;
+            if(socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] == -1){       // The target position is free
+                let a = socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
+                let b = socket.state[data.coordinates.y][data.coordinates.x];
+                socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = b;
+                socket.state[data.coordinates.y][data.coordinates.x] = a;
+                moveInfo = {
+                    isKilling: false,
+                    id: data.id,
+                    lastClickedCoordinates: data.lastClickedCoordinates
+                }
             }
+            else{                 // Else it's an ennemy
+                socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = socket.state[data.coordinates.y][data.coordinates.x];
+                // Replace old location by -1
+                socket.state[data.coordinates.y][data.coordinates.x] = -1;
+                // Kill the other piece
+                moveInfo = {
+                    isKilling: true,
+                    ennemyID: socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x],
+                    id: data.id,
+                    lastClickedCoordinates: data.lastClickedCoordinates
+                }
+            }
+            // Send infos to the client to move
+            console.log(socket.state);         
             socket.emit('move', moveInfo);
             socket.broadcast.emit('move', moveInfo);
         }
