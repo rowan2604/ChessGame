@@ -27,7 +27,7 @@ class Client{
                 document.getElementById("Phaser").style.visibility = "visible";
                 console.log(username);
             }
-        })
+        });
     }
 
     send(type, message){

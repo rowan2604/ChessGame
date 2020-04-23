@@ -32,6 +32,12 @@ function create() {
 
     initPieces();
 
+    /*GRAPHICS RECEIVING INFOS FROM SERVER*/
+    this.socket = io('http://localhost:0905');
+    this.socket.on('moving', function(piece, end_x, end_y){
+        grid.pieces[piece].setPosition(end_x, end_y);
+    });
+
 }
 
 function initPieces(){

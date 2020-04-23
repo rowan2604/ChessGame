@@ -33,6 +33,7 @@ class Grid{
         this.winner = undefined;
         this.isPlaying = true;
         this.allowMoving = false;           // If the pieces sprites are moving, you have to wait she stops before the next turn
+
     }
 
     initGrid(){
@@ -116,12 +117,12 @@ class Grid{
         }
         // move the piece
         if(this.selectedPiece != undefined){
-            
+            client.socket.emit('update_state', this.lastClickCoord.y, this.lastClickCoord.x, this.selectedPiece.getPosition().y, this.selectedPiece.getPosition().x);
             let availableMoves = getAvailableMoves(this.selectedPiece, this.state);
             let color = this.selectedPiece.getColor();
             drawAvailableMoves(availableMoves, this.state, this.graphicsAvailableMove, color, this.tile_dimension);
 
-            if (movementIsPossible(availableMoves, {x: this.lastClickCoord.x, y: this.lastClickCoord.y})) {
+            if(movementIsPossible(availableMoves, {x: this.lastClickCoord.x, y: this.lastClickCoord.y})) {
                 if(tmp == undefined){
                     // swap the ids in state element
                     let a = this.state[this.lastClickCoord.y][this.lastClickCoord.x];
@@ -150,10 +151,6 @@ class Grid{
                         if(this.pieces[i].getColor() == 'white'){
                             let moves = getAvailableMoves(this.pieces[i], this.state);
                             for(let j in moves){
-                                /*if(this.pieces[i].getType() == 'queen'){
-                                    console.log(moves[j])
-                                    console.log(black_king.getPosition());
-                                }*/
                                 if(moves[j].x == black_king.getPosition().x && moves[j].y == black_king.getPosition().y){
                                     this.isPlaying = false;
                                     this.winner = 'Player 2';

@@ -38,6 +38,29 @@ io.on('connection', socket => {
         console.log(socket.username + data);
         socket.broadcast.emit('play', data);
     });
+
+    /*INGAME HOOKS*/
+
+    socket.state = [                              //-1: no piece spaces else, unique ID of each pieces
+        [0, 1, 2, 3, 4, 5, 6, 7],
+        [8, 9, 10, 11, 12, 13, 14, 15],
+        [-1, -1, -1, -1, -1, -1, -1, -1],
+        [-1, -1, -1, -1, -1, -1, -1, -1],
+        [-1, -1, -1, -1, -1, -1, -1, -1],
+        [-1, -1, -1, -1, -1, -1, -1, -1],
+        [16, 17, 18, 19, 20, 21, 22, 23],
+        [24, 25, 26, 27, 28, 29, 30, 31]
+    ];
+
+    socket.on('update_state', function(end_x, end_y, start_x, start_y) {
+        socket.emit('check_move', socket.state);
+        let a = socket.state[start_x][start_y];
+        let b = socket.state[end_x][end_y];
+        this.state[start_x][start_y] = b;
+        this.state[end_x][end_y] = a;
+        socket.broadcast.emit('moving', a, end_y, end_x);
+    });
+        
 })
 
 server.listen(0905);
