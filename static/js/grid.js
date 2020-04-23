@@ -114,16 +114,9 @@ class Grid{
                 }
             }
         }
-        console.log(this.selectedPiece)
 
         // move the piece
         if(this.selectedPiece != undefined){
-            let availableMoves = getAvailableMoves(this.selectedPiece, this.state);
-            let color = this.selectedPiece.getColor();
-            drawAvailableMoves(availableMoves, this.state, this.graphicsAvailableMove, color, this.tile_dimension);
-
-            if(movementIsPossible(availableMoves, {x: this.lastClickCoord.x, y: this.lastClickCoord.y})) {
-            
             /*let data = {
                 type: this.selectedPiece.getType(),
                 color: this.selectedPiece.getColor(), 
@@ -134,7 +127,6 @@ class Grid{
                 size: this.tile_dimension
             };
             client.send('clicked', data);*/
-            }
             let availableMoves = getAvailableMoves(this.selectedPiece.getType(), this.selectedPiece.getColor(), this.selectedPiece.getPosition(), this.selectedPiece.firstMove, this.state);
             let color = this.selectedPiece.getColor();
             drawAvailableMoves(availableMoves, this.state, this.graphicsAvailableMove, color, this.tile_dimension);
