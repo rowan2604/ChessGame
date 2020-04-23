@@ -46,7 +46,7 @@ opn('http://localhost:905/')
 
 //---------------------------------- mySql ---------------------------------//
 
-var mysqlConfig = mysql.createConnection({
+let mysqlConfig = mysql.createConnection({
     host: 'sql7.freemysqlhosting.net',
     user: 'sql7334491',
     password: 'VgwJqqpjkc',
@@ -54,12 +54,12 @@ var mysqlConfig = mysql.createConnection({
 });
 
 
-mysqlConfig.connect(function (err) {
+ mysqlConfig.connect(function (err) {
     if (err) {
         throw err;
     }
 });
-
+ 
 app.use(express.static(__dirname + '/static'));
 app.use(bodyParser.text({
     type: "application/json"
@@ -68,13 +68,13 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
-var myRouter = express.Router();
+let myRouter = express.Router();
 // on creer un chemin de routage pour sign up
 myRouter.route('/signup')
     .post(function (req, res) {
-        var body = JSON.parse(req.body);
+        let body = JSON.parse(req.body);
         // on verifie l'existence de l'username dans la bdd pour la creation du compte
-        var query_verifuser = "SELECT * FROM users WHERE username='" + body.username + "'";
+        let query_verifuser = "SELECT * FROM users WHERE username='" + body.username + "'";
         mysqlConfig.query(query_verifuser, function (err, result) {
             if (err) {
                 res.status(500);
@@ -84,7 +84,8 @@ myRouter.route('/signup')
             } else {
                 if (result.length == 0) {
                    // on l'ajoute a la bdd
-                    var query_signup = "INSERT INTO users (username, password) VALUES ('" + body.username + "', '" + body.password + "')";
+                   if(body.username!='' && body.password!='' ){
+                    var query_signup = "INSERT INTO users (username, password) VALUES ('" + body.username + "', '" + body.password + "')";}
                     mysqlConfig.query(query_signup, function (err, result) {
                         if (err) {
                             res.status(500);
@@ -110,9 +111,9 @@ myRouter.route('/signup')
     // on creer un chemin de routage pour sign in
 myRouter.route('/signin')
     .post(function (req, res) {
-        var body = JSON.parse(req.body);
+        let body = JSON.parse(req.body);
     // on verfier le nom de l'utilisitaur avec son mot de passe et on affiche un message correspendant       
-        var query_verifuser = "SELECT * FROM users WHERE username='" + body.username + "' AND password='" + body.password + "'";
+        let query_verifuser = "SELECT * FROM users WHERE username='" + body.username + "' AND password='" + body.password + "'";
         mysqlConfig.query(query_verifuser, function (err, result) {
             if (err) {
                 res.status(500);
@@ -128,6 +129,7 @@ myRouter.route('/signin')
                 } else {
                     res.status(200);
                     res.json("Welcome");
+            
                 }
             }
         });
