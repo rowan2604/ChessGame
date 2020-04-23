@@ -53,8 +53,12 @@ let mysqlConfig = mysql.createConnection({
 });
 
 
-
-
+ mysqlConfig.connect(function (err) {
+    if (err) {
+        throw err;
+    }
+});
+ 
 app.use(express.static(__dirname + '/static'));
 app.use(bodyParser.text({
     type: "application/json"
@@ -124,6 +128,7 @@ myRouter.route('/signin')
                 } else {
                     res.status(200);
                     res.json("Welcome");
+            
                 }
             }
         });
@@ -131,6 +136,4 @@ myRouter.route('/signin')
     });
 
 app.use(myRouter);
-
-
 
