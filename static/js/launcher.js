@@ -1,6 +1,5 @@
 document.getElementById('playB').addEventListener("click", function () {
     client.send('username', username[0]);
-    console.log(username[0]);
 })
 
 document.getElementById("signIN").addEventListener("click", function () {
