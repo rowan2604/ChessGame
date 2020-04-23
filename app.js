@@ -56,6 +56,7 @@ io.on('connection', socket => {
             size: data.size
         };
         socket.emit('draw', response);
+
         let isMovePossible = movements.movementIsPossible(availableMoves, data.lastClickedCoordinates);
         if (isMovePossible) {
             let a = socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
@@ -63,7 +64,12 @@ io.on('connection', socket => {
             socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = b;
             socket.state[data.coordinates.y][data.coordinates.x] = a;
             console.log(socket.state);
-            socket.emit('move', data.lastClickedCoordinates);
+            let moveInfo = {
+                id: data.id,
+                lastClickedCoordinates: data.lastClickedCoordinates
+            }
+            socket.emit('move', moveInfo);
+            socket.broadcast.emit('move', moveInfo);
         }
     });
 

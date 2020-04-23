@@ -30,14 +30,15 @@ class Client{
         });
 
         this.socket.on('draw', data => {
+            console.log(data)
             grid.graphicsAvailableMove.clear();
             drawAvailableMoves(data.availableMoves, data.state, grid.graphicsAvailableMove, data.color, data.size);
         });
-
-        this.socket.on('move', destination => {
+        this.socket.on('move', data => {
+            grid.pieces[data.id].setPosition(data.lastClickedCoordinates.x, data.lastClickedCoordinates.y);
+            grid.pieces[data.id].firstMove = false;
             grid.graphicsAvailableMove.clear();
-            let i = 0;
-            console.log("move")
+            grid.selectedPiece = undefined;
         });
        
     }

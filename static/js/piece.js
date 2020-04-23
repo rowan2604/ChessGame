@@ -31,6 +31,10 @@ class Piece{
     getPosition(){
         return this.coord;
     }
+
+    getId() {
+        return this.id;
+    }
     
     getType(){
         return this.type;
