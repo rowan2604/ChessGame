@@ -242,7 +242,6 @@ function movementIsPossible(availableMoves, coordinates) {
             break;
         }
     }
-    console.log(playable)
     return playable;
 }
 

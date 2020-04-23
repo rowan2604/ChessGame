@@ -114,22 +114,23 @@ class Grid{
                 }
             }
         }
-
+        
         // move the piece
         if(this.selectedPiece != undefined){
-            /*let data = {
+            let data = {
                 type: this.selectedPiece.getType(),
                 color: this.selectedPiece.getColor(), 
                 coordinates: this.selectedPiece.getPosition(),
                 lastClickedCoordinates: this.lastClickCoord,
                 isFirstMove: this.selectedPiece.firstMove,
                 state: this.state,
-                size: this.tile_dimension
+                size: this.tile_dimension,
+                id: this.selectedPiece.getId()
             };
-            client.send('clicked', data);*/
+            client.send('clicked', data);
             let availableMoves = getAvailableMoves(this.selectedPiece.getType(), this.selectedPiece.getColor(), this.selectedPiece.getPosition(), this.selectedPiece.firstMove, this.state);
-            let color = this.selectedPiece.getColor();
-            drawAvailableMoves(availableMoves, this.state, this.graphicsAvailableMove, color, this.tile_dimension);
+            //let color = this.selectedPiece.getColor();
+            //drawAvailableMoves(availableMoves, this.state, this.graphicsAvailableMove, color, this.tile_dimension);
             if (movementIsPossible(availableMoves, {x: this.lastClickCoord.x, y: this.lastClickCoord.y})) {
                 if(tmp == undefined){
                     // swap the ids in state element
@@ -146,10 +147,10 @@ class Grid{
                     tmp.kill();
                 }
                 // Move action
-                this.selectedPiece.setPosition(this.lastClickCoord.x, this.lastClickCoord.y);
+                /*this.selectedPiece.setPosition(this.lastClickCoord.x, this.lastClickCoord.y);
                 this.selectedPiece.firstMove = false;
                 this.selectedPiece = undefined;
-                this.graphicsAvailableMove.clear();
+                this.graphicsAvailableMove.clear();*/
 
 
                 // When the turn ends, we check for a potential checkmate

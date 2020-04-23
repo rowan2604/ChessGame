@@ -45,10 +45,15 @@ io.on('connection', socket => {
             size: data.size
         };
         socket.emit('draw', response);
+
         let isMovePossible = movements.movementIsPossible(availableMoves, data.lastClickedCoordinates);
-        console.log(isMovePossible);
         if (isMovePossible) {
-            socket.emit('move', data.lastClickedCoordinates);
+            let moveInfo = {
+                id: data.id,
+                lastClickedCoordinates: data.lastClickedCoordinates
+            }
+            socket.emit('move', moveInfo);
+            socket.broadcast.emit('move', moveInfo);
         }
     });
 
