@@ -39,9 +39,10 @@ class Client{
             grid.pieces[data.id].firstMove = false;
             grid.graphicsAvailableMove.clear();
             grid.selectedPiece = undefined;
-
+            console.log(data.id);
+            console.log(data.enemyID);
             if (data.isKilling) {
-                grid.pieces[data.enemyId].kill();
+                grid.pieces[data.enemyID].kill();
             }
         });
        

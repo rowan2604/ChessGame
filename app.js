@@ -61,27 +61,28 @@ io.on('connection', socket => {
         if (isMovePossible) {
             let moveInfo;
             if(socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] == -1){       // The target position is free
-                let a = socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
-                let b = socket.state[data.coordinates.y][data.coordinates.x];
-                socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = b;
-                socket.state[data.coordinates.y][data.coordinates.x] = a;
                 moveInfo = {
                     isKilling: false,
                     id: data.id,
                     lastClickedCoordinates: data.lastClickedCoordinates
                 }
+                let a = socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
+                let b = socket.state[data.coordinates.y][data.coordinates.x];
+                socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = b;
+                socket.state[data.coordinates.y][data.coordinates.x] = a;
             }
             else{                 // Else it's an ennemy
+                moveInfo = {
+                    isKilling: true,
+                    enemyID: socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x],
+                    id: data.id,
+                    lastClickedCoordinates: data.lastClickedCoordinates
+                }
                 socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = socket.state[data.coordinates.y][data.coordinates.x];
                 // Replace old location by -1
                 socket.state[data.coordinates.y][data.coordinates.x] = -1;
                 // Kill the other piece
-                moveInfo = {
-                    isKilling: true,
-                    ennemyID: socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x],
-                    id: data.id,
-                    lastClickedCoordinates: data.lastClickedCoordinates
-                }
+                
             }
             // Send infos to the client to move
             console.log(socket.state);         
