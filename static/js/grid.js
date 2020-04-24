@@ -88,6 +88,7 @@ class Grid{
         this.lastClickCoord.x = tile.x / 64;             // 64: Size of a tile, sprite is the child of the group we clicked on. x is relative to the group, not the entire window
         this.lastClickCoord.y = tile.y / 64; 
         //this.justClicked = true;
+        // Datas to send to the server
         let data = {
             x: this.lastClickCoord.x,
             y: this.lastClickCoord.y
@@ -128,12 +129,12 @@ class Grid{
                 color: this.selectedPiece.getColor(), 
                 coordinates: this.selectedPiece.getPosition(),
                 lastClickedCoordinates: this.lastClickCoord,
-                isFirstMove: this.selectedPiece.firstMove,
+                isFirstMove: this.selectedPiece.isFirstMove(),
                 //state: this.state,
                 size: this.tile_dimension,
                 id: this.selectedPiece.getId()
             };
-            console.log("username envoye: " + data.username);
+            //console.log("username envoye: " + data.username);
             client.send('sv_move', data);
             let availableMoves = getAvailableMoves(this.selectedPiece.getType(), this.selectedPiece.getColor(), this.selectedPiece.getPosition(), this.selectedPiece.firstMove, this.state);
             //let color = this.selectedPiece.getColor();
@@ -161,7 +162,11 @@ class Grid{
 
 
                 // When the turn ends, we check for a potential checkmate
-                if(this.turn == 0){
+                
+
+
+
+                /*if(this.turn == 0){
                     let black_king = this.pieces[4];            // Black king's iD
                     for(let i in this.pieces){
                         if(this.pieces[i].getColor() == 'white'){
@@ -189,9 +194,53 @@ class Grid{
                         }
                     }
                 }
-                //this.turn == 0 ? this.turn = 1 : this.turn = 0;     // Swap turn
+                //this.turn == 0 ? this.turn = 1 : this.turn = 0;     // Swap turn*/
             }
         }
+    }
+
+    checkForWin(){
+        let win_data;
+        let types = [];
+        let isFirstMoves = [];
+        let coords = [];
+        if(this.turn == 1){
+            for(let i in this.pieces){
+                if(this.pieces[i].getColor() == 'white'){
+                    console.log(this.pieces[i].getPosition());
+                    coords.push(this.pieces[i].getPosition());
+                    isFirstMoves.push(this.pieces[i].isFirstMove());
+                    types.push(this.pieces[i].getType());
+                }
+            }
+            console.log(coords);
+            win_data = {
+                king_position: this.pieces[4].getPosition(),
+                color: 'white',
+                types : types,
+                isFirstMoves: isFirstMoves,
+                coords: coords,
+                turn: this.turn
+            };
+        }
+        else{
+            for(let i in this.pieces){
+                if(this.pieces[i].getColor() == 'black'){
+                    coords.push(this.pieces[i].getPosition());
+                    isFirstMoves.push(this.pieces[i].isFirstMove());
+                    types.push(this.pieces[i].getType());
+                }
+            }
+            win_data = {
+                king_position: this.pieces[28].getPosition(),
+                color: 'black',
+                types : types,
+                isFirstMoves: isFirstMoves,
+                coords: coords,
+                turn: this.turn
+            };
+        }
+        client.send('checkForWin', win_data);
     }
 
     update(){
@@ -202,11 +251,9 @@ class Grid{
 
         if(this.isPlaying){
             if(this.allowMoving){
-                if(this.justClicked){                                       // Code exec when player clicked on a tile
                     /*this.clickingActions();
                     this.justClicked = false;*/
                     // End of clicking actions
-                }
             }
         } 
     }

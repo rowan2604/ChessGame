@@ -103,11 +103,23 @@ io.on('connection', socket => {
                     // Send infos to the client 
                     socket.emit('move', moveInfo);
                     socket.broadcast.emit('move', moveInfo);
-                    //turn == 0 ? turn = 1 : turn = 0;     // Swap turn
                 }
             }
         }
-        
+    });
+
+    socket.on('checkForWin', data => {
+        let moves;
+        for(let i = 0; i < data.types.length; i++){
+            moves = movements.getAvailableMoves(data.types[i], data.color, data.coords[i], data.isFirstMoves[i], gameState);
+            for(let j in moves){
+                if(moves[j].x == data.king_position.x && moves[j].y == data.king_position.y){
+                    socket.emit('game_win', turn);
+                    socket.broadcast.emit('game_win', turn);
+                }
+            }
+        }
+        console.log(data);
     });
 
     socket.on('play', data => {

@@ -27,7 +27,7 @@ function create() {
     winner_text = game.add.text(grid.getPosition().x, grid.getPosition().y, '', {font: "16px Arial", fontStyle: 'bold', fill: "#000000"});
     winner_text.anchor.setTo(0.5, 0.5);
     winner_text.x = grid.getPosition().x + grid.getSize().width/2;
-    winner_text.y = grid.getPosition().y + grid.getSize().height  + 30; 
+    winner_text.y = grid.getPosition().y + grid.getSize().height + 50; 
     
     initPieces();
 }

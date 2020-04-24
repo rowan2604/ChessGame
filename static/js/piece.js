@@ -44,6 +44,10 @@ class Piece{
         return this.color;
     }
 
+    isFirstMove(){
+        return this.firstMove;
+    }
+
     kill(){
         this.isAlive = false;
         this.sprite.visible = false;
