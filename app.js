@@ -20,7 +20,7 @@ let gameState = [                              //-1: no piece spaces else, uniqu
     [24, 25, 26, 27, 28, 29, 30, 31]
     ];
 
-let turn = "";
+let turn = 1;
 
 
 //---------------------------------- Express ---------------------------------//
@@ -38,7 +38,7 @@ io.on('connection', socket => {
             numberPlayer++;
             username.push(data);
             if (numberPlayer == 1) {
-                turn = username[0];
+                //turn = username[0];
             }
             if (numberPlayer == 2) {
                 //username = ["Guest", "player2"];///Debug
@@ -60,8 +60,8 @@ io.on('connection', socket => {
     });
     
     socket.on('sv_move', data => {              // sv for server side
-        if (turn == data.username) {
-            if ((data.color == 'white' && turn == username[0]) || (data.color == 'black' && turn == username[1])) {
+        //if (turn == data.username) {
+            //if ((data.color == 'white' && turn == username[0]) || (data.color == 'black' && turn == username[1])) {
                 let availableMoves =  movements.getAvailableMoves(data.type, data.color, data.coordinates, data.isFirstMove, gameState);
                 let response = {
                     availableMoves: availableMoves,
@@ -78,7 +78,8 @@ io.on('connection', socket => {
                         moveInfo = {
                             isKilling: false,
                             id: data.id,
-                            lastClickedCoordinates: data.lastClickedCoordinates
+                            lastClickedCoordinates: data.lastClickedCoordinates,
+                            turn: turn
                         }
                         // Change the tab of pieces positions
                         let a = gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
@@ -91,7 +92,8 @@ io.on('connection', socket => {
                             isKilling: true,
                             enemyID: gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x],
                             id: data.id,
-                            lastClickedCoordinates: data.lastClickedCoordinates
+                            lastClickedCoordinates: data.lastClickedCoordinates,
+                            turn: turn
                         }
                         gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = gameState[data.coordinates.y][data.coordinates.x];
                         // Replace old location by -1 (no piece)
@@ -102,10 +104,11 @@ io.on('connection', socket => {
                     console.log(gameState);
                     socket.emit('move', moveInfo);
                     socket.broadcast.emit('move', moveInfo);
-                    (turn == username[0]) ? turn = username[1] : turn = username[0];
+                    //(turn == username[0]) ? turn = username[1] : turn = username[0];
+                    turn == 0 ? turn = 1 : turn = 0;     // Swap turn
                 }
-            }
-        }
+            //}
+       // }
         
     });
 

@@ -53,6 +53,7 @@ class Client{
             if (data.isKilling) {
                 grid.pieces[data.enemyID].kill();
             }
+            grid.turn = data.turn;
         });
        
     }

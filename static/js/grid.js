@@ -170,7 +170,6 @@ class Grid{
                                     this.isPlaying = false;
                                     this.winner = 'Player 2';
                                 }
-
                             }
                         }
                     }
@@ -189,7 +188,7 @@ class Grid{
                         }
                     }
                 }
-                this.turn == 0 ? this.turn = 1 : this.turn = 0;     // Swap turn
+                //this.turn == 0 ? this.turn = 1 : this.turn = 0;     // Swap turn
             }
         }
     }
