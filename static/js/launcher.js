@@ -1,12 +1,15 @@
 document.getElementById('playB').addEventListener("click", function () {
+    if (username.length == 0) {
+        username.push("Guest");
+    }
     client.send('username', username[0]);
 })
 
 document.getElementById("signIN").addEventListener("click", function () {
-    let username = document.getElementById("input_username").value;
+    username.push(document.getElementById("input_username").value);
     let password = document.getElementById("input_password").value;
     let body = {
-        username: username,
+        username: username[0],
         password: password
     };
     const Http = new XMLHttpRequest();
