@@ -5,6 +5,7 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const mysql = require('mysql');
 const bodyParser = require("body-parser");
+const jwt = require('jsonwebtoken');
 const movements = require('./static/js/movements.js');
 
 let numberPlayer = 0;
@@ -127,14 +128,14 @@ opn('http://localhost:905/')
 //---------------------------------- mySql ---------------------------------//
 
 let mysqlConfig = mysql.createConnection({
-    host: 'sql7.freemysqlhosting.net',
-    user: 'sql7334491',
-    password: 'VgwJqqpjkc',
-    database: 'sql7334491',
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'mydb',
 });
 
 
- mysqlConfig.connect(function (err) {
+mysqlConfig.connect(function (err) {
     if (err) {
         throw err;
     }
@@ -188,11 +189,12 @@ myRouter.route('/signup')
         });
 
     });
+
     // on creer un chemin de routage pour sign in
 myRouter.route('/signin')
     .post(function (req, res) {
         let body = JSON.parse(req.body);
-    // on verfier le nom de l'utilisitaur avec son mot de passe et on affiche un message correspendant       
+    // on verifier le nom de l'utilisitaur avec son mot de passe et on affiche un message correspendant       
         let query_verifuser = "SELECT * FROM users WHERE username='" + body.username + "' AND password='" + body.password + "'";
         mysqlConfig.query(query_verifuser, function (err, result) {
             if (err) {
@@ -208,7 +210,19 @@ myRouter.route('/signin')
                     });
                 } else {
                     res.status(200);
-                    res.json("Welcome");
+                    // res.json("Welcome");
+                    const user = {
+                        username : body.username
+                    };
+                    jwt.sign(user,'secretkey', { expiresIn: '300s' }, (err, token) => {
+                        console.log(token);
+                        res.json({
+                          token
+                         
+                        });
+                        
+                    });
+        
             
                 }
             }
