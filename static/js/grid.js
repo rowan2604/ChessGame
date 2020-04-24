@@ -171,6 +171,7 @@ class Grid{
                     for(let i in this.pieces){
                         if(this.pieces[i].getColor() == 'white'){
                             let moves = getAvailableMoves(this.pieces[i], this.state);
+                            console.log(moves)
                             for(let j in moves){
                                 if(moves[j].x == black_king.getPosition().x && moves[j].y == black_king.getPosition().y){
                                     this.isPlaying = false;

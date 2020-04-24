@@ -5,6 +5,7 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const mysql = require('mysql');
 const bodyParser = require("body-parser");
+const jwt = require('jsonwebtoken');
 const movements = require('./static/js/movements.js');
 
 let numberPlayer = 0;
@@ -37,12 +38,17 @@ io.on('connection', socket => {
         if (numberPlayer < 2) {
             numberPlayer++;
             username.push(data);
-            if (numberPlayer == 1) {
-                turn = username[0];
-            }
             if (numberPlayer == 2) {
-                socket.emit('setup', username[0]);
-                socket.broadcast.emit('setup', username[1]);
+                if (username[0] == 'Guest' && username[1] == 'Guest') {
+                    username = ['Player1', 'Player2']
+                    socket.emit('setup', ['Player2', 'Player1']);
+                    socket.broadcast.emit('setup', ['Player1', 'Player2']);
+                }
+                else {
+                    socket.emit('setup', [username[1], username[0]]);
+                    socket.broadcast.emit('setup', [username[0], username[1]]);
+                }
+                turn = username[0];
             } else {
                 socket.emit('setup', "wait");
             }
@@ -141,7 +147,7 @@ let mysqlConfig = mysql.createConnection({
 });
 
 
- mysqlConfig.connect(function (err) {
+mysqlConfig.connect(function (err) {
     if (err) {
         throw err;
     }
@@ -195,11 +201,12 @@ myRouter.route('/signup')
         });
 
     });
+
     // on creer un chemin de routage pour sign in
 myRouter.route('/signin')
     .post(function (req, res) {
         let body = JSON.parse(req.body);
-    // on verfier le nom de l'utilisitaur avec son mot de passe et on affiche un message correspendant       
+    // on verifier le nom de l'utilisitaur avec son mot de passe et on affiche un message correspendant       
         let query_verifuser = "SELECT * FROM users WHERE username='" + body.username + "' AND password='" + body.password + "'";
         mysqlConfig.query(query_verifuser, function (err, result) {
             if (err) {
@@ -215,7 +222,19 @@ myRouter.route('/signin')
                     });
                 } else {
                     res.status(200);
-                    res.json("Welcome");
+                    // res.json("Welcome");
+                    const user = {
+                        username : body.username
+                    };
+                    jwt.sign(user,'secretkey', { expiresIn: '300s' }, (err, token) => {
+                        console.log(token);
+                        res.json({
+                          token
+                         
+                        });
+                        
+                    });
+        
             
                 }
             }

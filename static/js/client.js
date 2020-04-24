@@ -21,12 +21,10 @@ class Client{
                 alert("A game has already started...");
             }
             else {
-                username.push(data);
+                username = data;
                 document.getElementById("Connection").style.visibility = "hidden";
                 document.getElementById("Wait").style.visibility = "hidden";
                 document.getElementById("Phaser").style.visibility = "visible";
-                
-                console.log(username);
             }
         });
 
