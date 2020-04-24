@@ -25,9 +25,36 @@ class Client{
                 document.getElementById("Connection").style.visibility = "hidden";
                 document.getElementById("Wait").style.visibility = "hidden";
                 document.getElementById("Phaser").style.visibility = "visible";
+                
                 console.log(username);
             }
-        })
+        });
+
+        this.socket.on('selectPiece', data =>{
+            if(data != -1){
+                grid.clickingActions(grid.pieces[data]);
+            }
+            else{
+                grid.clickingActions(undefined);
+            }
+        });
+
+        this.socket.on('draw', data => {
+            grid.graphicsAvailableMove.clear();
+            drawAvailableMoves(data.availableMoves, data.state, grid.graphicsAvailableMove, data.color, data.size);
+        });
+
+        this.socket.on('move', data => {
+            grid.pieces[data.id].setPosition(data.lastClickedCoordinates.x, data.lastClickedCoordinates.y);
+            grid.pieces[data.id].firstMove = false;
+            grid.graphicsAvailableMove.clear();
+            grid.selectedPiece = undefined;
+            if (data.isKilling) {
+                grid.pieces[data.enemyID].kill();
+            }
+            grid.turn = data.turn;
+        });
+       
     }
 
     send(type, message){

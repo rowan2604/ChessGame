@@ -14,7 +14,6 @@ class Piece{
         this.tile_dimension = game.cache.getImage('white_tile').width;
         this.firstMove = true;
         this.tween = undefined;
-        
     }
 
     setPosition(x, y){                          // x and y are chess coordinates (ex: 1, 1)
@@ -31,6 +30,10 @@ class Piece{
 
     getPosition(){
         return this.coord;
+    }
+
+    getId() {
+        return this.id;
     }
     
     getType(){
