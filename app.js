@@ -42,6 +42,7 @@ io.on('connection', socket => {
             }
             if (numberPlayer == 2) {
                 //username = ["Guest", "player2"];///Debug
+                console.log(username);
                 socket.emit('setup', username[0]);
                 socket.broadcast.emit('setup', username[1]);
             } else {
@@ -60,8 +61,9 @@ io.on('connection', socket => {
     });
     
     socket.on('sv_move', data => {              // sv for server side
-        if (turn == data.username) {
-            if ((data.color == 'white' && turn == username[0]) || (data.color == 'black' && turn == username[1])) {
+        //if (turn == data.username) {
+            //if ((data.color == 'white' && turn == username[0]) || (data.color == 'black' && turn == username[1])) {
+                console.log(data.username);
                 let availableMoves =  movements.getAvailableMoves(data.type, data.color, data.coordinates, data.isFirstMove, gameState);
                 let response = {
                     availableMoves: availableMoves,
@@ -104,8 +106,8 @@ io.on('connection', socket => {
                     socket.broadcast.emit('move', moveInfo);
                     (turn == username[0]) ? turn = username[1] : turn = username[0];
                 }
-            }
-        }
+            //}
+       // }
         
     });
 

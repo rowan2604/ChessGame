@@ -1,4 +1,4 @@
-let game = new Phaser.Game(1000, 700, Phaser.AUTO, 'Phaser', { preload: preload, create: create, update: update, render: render }); 
+let game = new Phaser.Game(1366, 657, Phaser.AUTO, 'Phaser', { preload: preload, create: create, update: update, render: render }); 
 
 let black_tile;
 let white_tile;
@@ -9,12 +9,12 @@ let winner_text;
 function preload() {+
     game.load.image('black_tile', '../assets/black_tile.png');
     game.load.image('white_tile', '../assets/white_tile.png');
-    game.load.spritesheet('pieces', '../assets/pieces2.png', 64, 64, 12);
+    game.load.spritesheet('pieces', '../assets/pieces2.png', 64, 64, 12); 
 }
 
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    game.stage.backgroundColor = '#CD9261';
+    game.stage.backgroundColor = "#ffffff";
 
     grid = new Grid(pieces);
 

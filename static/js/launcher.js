@@ -3,10 +3,10 @@ document.getElementById('playB').addEventListener("click", function () {
 })
 
 document.getElementById("signIN").addEventListener("click", function () {
-    let username = document.getElementById("input_username").value;
+    username.push(document.getElementById("input_username").value);
     let password = document.getElementById("input_password").value;
     let body = {
-        username: username,
+        username: username[0],
         password: password
     };
     const Http = new XMLHttpRequest();

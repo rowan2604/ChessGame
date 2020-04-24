@@ -123,7 +123,7 @@ class Grid{
         // move the piece
         if(this.selectedPiece != undefined){
             let data = {
-                username: name,
+                username: username[0],
                 type: this.selectedPiece.getType(),
                 color: this.selectedPiece.getColor(), 
                 coordinates: this.selectedPiece.getPosition(),
