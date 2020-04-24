@@ -29,7 +29,6 @@ function create() {
     winner_text.x = grid.getPosition().x + grid.getSize().width/2;
     winner_text.y = grid.getPosition().y + grid.getSize().height  + 30; 
     
-
     initPieces();
 }
 

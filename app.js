@@ -9,6 +9,16 @@ const movements = require('./static/js/movements.js');
 
 let numberPlayer = 0;
 let username = [];
+let gameState = [                              //-1: no piece spaces else, unique ID of each pieces
+    [0, 1, 2, 3, 4, 5, 6, 7],
+    [8, 9, 10, 11, 12, 13, 14, 15],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [16, 17, 18, 19, 20, 21, 22, 23],
+    [24, 25, 26, 27, 28, 29, 30, 31]
+    ];
 
 
 //---------------------------------- Express ---------------------------------//
@@ -36,22 +46,18 @@ io.on('connection', socket => {
         }
     });
 
-    socket.state = [                              //-1: no piece spaces else, unique ID of each pieces
-        [0, 1, 2, 3, 4, 5, 6, 7],
-        [8, 9, 10, 11, 12, 13, 14, 15],
-        [-1, -1, -1, -1, -1, -1, -1, -1],
-        [-1, -1, -1, -1, -1, -1, -1, -1],
-        [-1, -1, -1, -1, -1, -1, -1, -1],
-        [-1, -1, -1, -1, -1, -1, -1, -1],
-        [16, 17, 18, 19, 20, 21, 22, 23],
-        [24, 25, 26, 27, 28, 29, 30, 31]
-        ];
+    // INGAME SERVER SIDE
 
-    socket.on('clicked', data => {
-        let availableMoves =  movements.getAvailableMoves(data.type, data.color, data.coordinates, data.isFirstMove, data.state);
+    socket.on('clicked', data =>{
+        let pieceID = gameState[data.y][data.x];
+        socket.emit('selectPiece', pieceID);
+    });
+    
+    socket.on('sv_move', data => {              // sv for server side
+        let availableMoves =  movements.getAvailableMoves(data.type, data.color, data.coordinates, data.isFirstMove, gameState);
         let response = {
             availableMoves: availableMoves,
-            state: data.state,
+            state: gameState,
             color: data.color,
             size: data.size
         };
@@ -59,33 +65,33 @@ io.on('connection', socket => {
 
         let isMovePossible = movements.movementIsPossible(availableMoves, data.lastClickedCoordinates);
         if (isMovePossible) {
-            let moveInfo;
-            if(socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] == -1){       // The target position is free
+            let moveInfo;               // Will send different informations to the client depending on ther action (move or kill)
+            if(gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] == -1){       // The target position is free
                 moveInfo = {
                     isKilling: false,
                     id: data.id,
                     lastClickedCoordinates: data.lastClickedCoordinates
                 }
-                let a = socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
-                let b = socket.state[data.coordinates.y][data.coordinates.x];
-                socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = b;
-                socket.state[data.coordinates.y][data.coordinates.x] = a;
+                // Change the tab of pieces positions
+                let a = gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
+                let b = gameState[data.coordinates.y][data.coordinates.x];
+                gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = b;
+                gameState[data.coordinates.y][data.coordinates.x] = a;
             }
-            else{                 // Else it's an ennemy
+            else{                                                                                       // Else it's an ennemy
                 moveInfo = {
                     isKilling: true,
-                    enemyID: socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x],
+                    enemyID: gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x],
                     id: data.id,
                     lastClickedCoordinates: data.lastClickedCoordinates
                 }
-                socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = socket.state[data.coordinates.y][data.coordinates.x];
-                // Replace old location by -1
-                socket.state[data.coordinates.y][data.coordinates.x] = -1;
-                // Kill the other piece
-                
+                gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = gameState[data.coordinates.y][data.coordinates.x];
+                // Replace old location by -1 (no piece)
+                gameState[data.coordinates.y][data.coordinates.x] = -1;
+                // Send info to kill the other piece
             }
-            // Send infos to the client to move
-            console.log(socket.state);         
+            // Send infos to the client 
+            console.log(gameState);
             socket.emit('move', moveInfo);
             socket.broadcast.emit('move', moveInfo);
         }
