@@ -87,12 +87,17 @@ class Grid{
     clickedOnTile(tile){                    // Updates the lest tile we clicked on. We will do stuff in update function
         this.lastClickCoord.x = tile.x / 64;             // 64: Size of a tile, sprite is the child of the group we clicked on. x is relative to the group, not the entire window
         this.lastClickCoord.y = tile.y / 64; 
-        this.justClicked = true;
+        //this.justClicked = true;
+        let data = {
+            x: this.lastClickCoord.x,
+            y: this.lastClickCoord.y
+        }
+        client.send('clicked', data);
     }
 
-    clickingActions(){
-        let tmp = this.getPiece(this.lastClickCoord.x, this.lastClickCoord.y);       // Represents the piece we just clicked on (If selectable).
-        if(tmp != undefined){
+    clickingActions(tmp){
+        //let tmp = this.getPiece(this.lastClickCoord.x, this.lastClickCoord.y);       // Represents the piece we just clicked on (If selectable).
+        if(tmp != undefined){           // We define the curret piece
             if(this.turn == 1 && tmp.getColor() == 'black'){           // White player can't select a black piece.
                 if(tmp != this.selectedPiece){
                     this.selectedPiece = tmp;
@@ -124,11 +129,11 @@ class Grid{
                 coordinates: this.selectedPiece.getPosition(),
                 lastClickedCoordinates: this.lastClickCoord,
                 isFirstMove: this.selectedPiece.firstMove,
-                state: this.state,
+                //state: this.state,
                 size: this.tile_dimension,
                 id: this.selectedPiece.getId()
             };
-            client.send('clicked', data);
+            client.send('sv_move', data);
             let availableMoves = getAvailableMoves(this.selectedPiece.getType(), this.selectedPiece.getColor(), this.selectedPiece.getPosition(), this.selectedPiece.firstMove, this.state);
             //let color = this.selectedPiece.getColor();
             //drawAvailableMoves(availableMoves, this.state, this.graphicsAvailableMove, color, this.tile_dimension);
@@ -146,7 +151,7 @@ class Grid{
                     this.state[this.selectedPiece.getPosition().y][this.selectedPiece.getPosition().x] = -1;
                     // Kill the other piece
                     tmp.kill();
-                }
+                }*/
                 // Move action
                 /*this.selectedPiece.setPosition(this.lastClickCoord.x, this.lastClickCoord.y);
                 this.selectedPiece.firstMove = false;
@@ -180,7 +185,6 @@ class Grid{
                                     this.isPlaying = false;
                                     this.winner = 'Player 1';
                                 }
-
                             }
                         }
                     }
@@ -199,8 +203,8 @@ class Grid{
         if(this.isPlaying){
             if(this.allowMoving){
                 if(this.justClicked){                                       // Code exec when player clicked on a tile
-                    this.clickingActions();
-                    this.justClicked = false;
+                    /*this.clickingActions();
+                    this.justClicked = false;*/
                     // End of clicking actions
                 }
             }
