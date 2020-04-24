@@ -37,12 +37,17 @@ io.on('connection', socket => {
         if (numberPlayer < 2) {
             numberPlayer++;
             username.push(data);
-            if (numberPlayer == 1) {
-                turn = username[0];
-            }
             if (numberPlayer == 2) {
-                socket.emit('setup', username[0]);
-                socket.broadcast.emit('setup', username[1]);
+                if (username[0] == 'Guest' && username[1] == 'Guest') {
+                    username = ['Player1', 'Player2']
+                    socket.emit('setup', ['Player2', 'Player1']);
+                    socket.broadcast.emit('setup', ['Player1', 'Player2']);
+                }
+                else {
+                    socket.emit('setup', [username[1], username[0]]);
+                    socket.broadcast.emit('setup', [username[0], username[1]]);
+                }
+                turn = username[0];
             } else {
                 socket.emit('setup', "wait");
             }
