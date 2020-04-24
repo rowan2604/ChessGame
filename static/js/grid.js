@@ -93,7 +93,7 @@ class Grid{
     clickingActions(){
         let tmp = this.getPiece(this.lastClickCoord.x, this.lastClickCoord.y);       // Represents the piece we just clicked on (If selectable).
         if(tmp != undefined){
-            if(this.turn == 0 && tmp.getColor() == 'black'){           // White player can't select a black piece.
+            if(this.turn == 1 && tmp.getColor() == 'black'){           // White player can't select a black piece.
                 if(tmp != this.selectedPiece){
                     this.selectedPiece = tmp;
                     this.graphicsAvailableMove.clear();
@@ -103,7 +103,7 @@ class Grid{
                     this.graphicsAvailableMove.clear();
                 }
             }
-            else if(this.turn == 1 && tmp.getColor() == 'white'){
+            else if(this.turn == 0 && tmp.getColor() == 'white'){
                 if(tmp != this.selectedPiece){
                     this.selectedPiece = tmp;
                     this.graphicsAvailableMove.clear();
@@ -118,6 +118,7 @@ class Grid{
         // move the piece
         if(this.selectedPiece != undefined){
             let data = {
+                username: name,
                 type: this.selectedPiece.getType(),
                 color: this.selectedPiece.getColor(), 
                 coordinates: this.selectedPiece.getPosition(),
@@ -132,7 +133,7 @@ class Grid{
             //let color = this.selectedPiece.getColor();
             //drawAvailableMoves(availableMoves, this.state, this.graphicsAvailableMove, color, this.tile_dimension);
             if (movementIsPossible(availableMoves, {x: this.lastClickCoord.x, y: this.lastClickCoord.y})) {
-                if(tmp == undefined){
+                /*if(tmp == undefined){
                     // swap the ids in state element
                     let a = this.state[this.lastClickCoord.y][this.lastClickCoord.x];
                     let b = this.state[this.selectedPiece.getPosition().y][this.selectedPiece.getPosition().x];

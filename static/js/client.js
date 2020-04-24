@@ -30,7 +30,6 @@ class Client{
         });
 
         this.socket.on('draw', data => {
-            console.log(data)
             grid.graphicsAvailableMove.clear();
             drawAvailableMoves(data.availableMoves, data.state, grid.graphicsAvailableMove, data.color, data.size);
         });
@@ -39,8 +38,6 @@ class Client{
             grid.pieces[data.id].firstMove = false;
             grid.graphicsAvailableMove.clear();
             grid.selectedPiece = undefined;
-            console.log(data.id);
-            console.log(data.enemyID);
             if (data.isKilling) {
                 grid.pieces[data.enemyID].kill();
             }

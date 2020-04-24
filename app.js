@@ -10,6 +10,8 @@ const movements = require('./static/js/movements.js');
 let numberPlayer = 0;
 let username = [];
 
+let turn = "";
+
 
 //---------------------------------- Express ---------------------------------//
 
@@ -25,7 +27,11 @@ io.on('connection', socket => {
         if (numberPlayer < 2) {
             numberPlayer++;
             username.push(data);
+            if (numberPlayer == 1) {
+                turn = username[0];
+            }
             if (numberPlayer == 2) {
+                //username = ["Guest", "player2"];///Debug
                 socket.emit('setup', username[0]);
                 socket.broadcast.emit('setup', username[1]);
             } else {
@@ -48,47 +54,53 @@ io.on('connection', socket => {
         ];
 
     socket.on('clicked', data => {
-        let availableMoves =  movements.getAvailableMoves(data.type, data.color, data.coordinates, data.isFirstMove, data.state);
-        let response = {
-            availableMoves: availableMoves,
-            state: data.state,
-            color: data.color,
-            size: data.size
-        };
-        socket.emit('draw', response);
+        if (turn == data.username) {
+            if ((data.color == 'white' && turn == username[0]) || (data.color == 'black' && turn == username[1])) {
+                console.log("mieux");
+                let availableMoves =  movements.getAvailableMoves(data.type, data.color, data.coordinates, data.isFirstMove, data.state);
+                let response = {
+                    availableMoves: availableMoves,
+                    state: data.state,
+                    color: data.color,
+                    size: data.size
+                };
+                socket.emit('draw', response);
+                console.log(username);
+                let isMovePossible = movements.movementIsPossible(availableMoves, data.lastClickedCoordinates);
+                if (isMovePossible) {
+                    let moveInfo;
+                    if(socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] == -1){       // The target position is free
+                        moveInfo = {
+                            isKilling: false,
+                            id: data.id,
+                            lastClickedCoordinates: data.lastClickedCoordinates
+                        }
+                        let a = socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
+                        let b = socket.state[data.coordinates.y][data.coordinates.x];
+                        socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = b;
+                        socket.state[data.coordinates.y][data.coordinates.x] = a;
+                    }
+                    else{                 // Else it's an ennemy
+                        moveInfo = {
+                            isKilling: true,
+                            enemyID: socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x],
+                            id: data.id,
+                            lastClickedCoordinates: data.lastClickedCoordinates
+                        }
+                        socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = socket.state[data.coordinates.y][data.coordinates.x];
+                        // Replace old location by -1
+                        socket.state[data.coordinates.y][data.coordinates.x] = -1;
+                        // Kill the other piece
 
-        let isMovePossible = movements.movementIsPossible(availableMoves, data.lastClickedCoordinates);
-        if (isMovePossible) {
-            let moveInfo;
-            if(socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] == -1){       // The target position is free
-                moveInfo = {
-                    isKilling: false,
-                    id: data.id,
-                    lastClickedCoordinates: data.lastClickedCoordinates
+                    }
+                    // Send infos to the client to move    
+                    socket.emit('move', moveInfo);
+                    socket.broadcast.emit('move', moveInfo);
+                    (turn == username[0]) ? turn = username[1] : turn = username[0];
                 }
-                let a = socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
-                let b = socket.state[data.coordinates.y][data.coordinates.x];
-                socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = b;
-                socket.state[data.coordinates.y][data.coordinates.x] = a;
             }
-            else{                 // Else it's an ennemy
-                moveInfo = {
-                    isKilling: true,
-                    enemyID: socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x],
-                    id: data.id,
-                    lastClickedCoordinates: data.lastClickedCoordinates
-                }
-                socket.state[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = socket.state[data.coordinates.y][data.coordinates.x];
-                // Replace old location by -1
-                socket.state[data.coordinates.y][data.coordinates.x] = -1;
-                // Kill the other piece
-                
-            }
-            // Send infos to the client to move
-            console.log(socket.state);         
-            socket.emit('move', moveInfo);
-            socket.broadcast.emit('move', moveInfo);
         }
+        
     });
 
     socket.on('play', data => {
