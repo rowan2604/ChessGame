@@ -20,6 +20,8 @@ let gameState = [                              //-1: no piece spaces else, uniqu
     [24, 25, 26, 27, 28, 29, 30, 31]
     ];
 
+let turn = "";
+
 
 //---------------------------------- Express ---------------------------------//
 
@@ -35,7 +37,11 @@ io.on('connection', socket => {
         if (numberPlayer < 2) {
             numberPlayer++;
             username.push(data);
+            if (numberPlayer == 1) {
+                turn = username[0];
+            }
             if (numberPlayer == 2) {
+                //username = ["Guest", "player2"];///Debug
                 socket.emit('setup', username[0]);
                 socket.broadcast.emit('setup', username[1]);
             } else {
@@ -54,47 +60,53 @@ io.on('connection', socket => {
     });
     
     socket.on('sv_move', data => {              // sv for server side
-        let availableMoves =  movements.getAvailableMoves(data.type, data.color, data.coordinates, data.isFirstMove, gameState);
-        let response = {
-            availableMoves: availableMoves,
-            state: gameState,
-            color: data.color,
-            size: data.size
-        };
-        socket.emit('draw', response);
+        if (turn == data.username) {
+            if ((data.color == 'white' && turn == username[0]) || (data.color == 'black' && turn == username[1])) {
+                let availableMoves =  movements.getAvailableMoves(data.type, data.color, data.coordinates, data.isFirstMove, gameState);
+                let response = {
+                    availableMoves: availableMoves,
+                    state: gameState,
+                    color: data.color,
+                    size: data.size
+                };
+                socket.emit('draw', response);
 
-        let isMovePossible = movements.movementIsPossible(availableMoves, data.lastClickedCoordinates);
-        if (isMovePossible) {
-            let moveInfo;               // Will send different informations to the client depending on ther action (move or kill)
-            if(gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] == -1){       // The target position is free
-                moveInfo = {
-                    isKilling: false,
-                    id: data.id,
-                    lastClickedCoordinates: data.lastClickedCoordinates
+                let isMovePossible = movements.movementIsPossible(availableMoves, data.lastClickedCoordinates);
+                if (isMovePossible) {
+                    let moveInfo;               // Will send different informations to the client depending on ther action (move or kill)
+                    if(gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] == -1){       // The target position is free
+                        moveInfo = {
+                            isKilling: false,
+                            id: data.id,
+                            lastClickedCoordinates: data.lastClickedCoordinates
+                        }
+                        // Change the tab of pieces positions
+                        let a = gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
+                        let b = gameState[data.coordinates.y][data.coordinates.x];
+                        gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = b;
+                        gameState[data.coordinates.y][data.coordinates.x] = a;
+                    }
+                    else{                                                                                       // Else it's an ennemy
+                        moveInfo = {
+                            isKilling: true,
+                            enemyID: gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x],
+                            id: data.id,
+                            lastClickedCoordinates: data.lastClickedCoordinates
+                        }
+                        gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = gameState[data.coordinates.y][data.coordinates.x];
+                        // Replace old location by -1 (no piece)
+                        gameState[data.coordinates.y][data.coordinates.x] = -1;
+                        // Send info to kill the other piece
+                    }
+                    // Send infos to the client 
+                    console.log(gameState);
+                    socket.emit('move', moveInfo);
+                    socket.broadcast.emit('move', moveInfo);
+                    (turn == username[0]) ? turn = username[1] : turn = username[0];
                 }
-                // Change the tab of pieces positions
-                let a = gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
-                let b = gameState[data.coordinates.y][data.coordinates.x];
-                gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = b;
-                gameState[data.coordinates.y][data.coordinates.x] = a;
             }
-            else{                                                                                       // Else it's an ennemy
-                moveInfo = {
-                    isKilling: true,
-                    enemyID: gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x],
-                    id: data.id,
-                    lastClickedCoordinates: data.lastClickedCoordinates
-                }
-                gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = gameState[data.coordinates.y][data.coordinates.x];
-                // Replace old location by -1 (no piece)
-                gameState[data.coordinates.y][data.coordinates.x] = -1;
-                // Send info to kill the other piece
-            }
-            // Send infos to the client 
-            console.log(gameState);
-            socket.emit('move', moveInfo);
-            socket.broadcast.emit('move', moveInfo);
         }
+        
     });
 
     socket.on('play', data => {
