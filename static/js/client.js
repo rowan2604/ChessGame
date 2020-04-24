@@ -25,6 +25,7 @@ class Client{
                 document.getElementById("Connection").style.visibility = "hidden";
                 document.getElementById("Wait").style.visibility = "hidden";
                 document.getElementById("Phaser").style.visibility = "visible";
+                
                 console.log(username);
             }
         });
@@ -37,8 +38,6 @@ class Client{
                 grid.clickingActions(undefined);
             }
         });
-
-        
 
         this.socket.on('draw', data => {
             grid.graphicsAvailableMove.clear();
@@ -53,6 +52,7 @@ class Client{
             if (data.isKilling) {
                 grid.pieces[data.enemyID].kill();
             }
+            grid.turn = data.turn;
         });
        
     }

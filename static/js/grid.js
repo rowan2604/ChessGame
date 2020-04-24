@@ -133,6 +133,7 @@ class Grid{
                 size: this.tile_dimension,
                 id: this.selectedPiece.getId()
             };
+            console.log("username envoye: " + data.username);
             client.send('sv_move', data);
             let availableMoves = getAvailableMoves(this.selectedPiece.getType(), this.selectedPiece.getColor(), this.selectedPiece.getPosition(), this.selectedPiece.firstMove, this.state);
             //let color = this.selectedPiece.getColor();
@@ -170,7 +171,6 @@ class Grid{
                                     this.isPlaying = false;
                                     this.winner = 'Player 2';
                                 }
-
                             }
                         }
                     }
@@ -189,7 +189,7 @@ class Grid{
                         }
                     }
                 }
-                this.turn == 0 ? this.turn = 1 : this.turn = 0;     // Swap turn
+                //this.turn == 0 ? this.turn = 1 : this.turn = 0;     // Swap turn
             }
         }
     }

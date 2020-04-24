@@ -41,8 +41,6 @@ io.on('connection', socket => {
                 turn = username[0];
             }
             if (numberPlayer == 2) {
-                //username = ["Guest", "player2"];///Debug
-                console.log(username);
                 socket.emit('setup', username[0]);
                 socket.broadcast.emit('setup', username[1]);
             } else {
@@ -61,9 +59,8 @@ io.on('connection', socket => {
     });
     
     socket.on('sv_move', data => {              // sv for server side
-        //if (turn == data.username) {
-            //if ((data.color == 'white' && turn == username[0]) || (data.color == 'black' && turn == username[1])) {
-                console.log(data.username);
+        if (turn == data.username) {
+            if ((data.color == 'white' && turn == username[0]) || (data.color == 'black' && turn == username[1])) {
                 let availableMoves =  movements.getAvailableMoves(data.type, data.color, data.coordinates, data.isFirstMove, gameState);
                 let response = {
                     availableMoves: availableMoves,
@@ -75,12 +72,14 @@ io.on('connection', socket => {
 
                 let isMovePossible = movements.movementIsPossible(availableMoves, data.lastClickedCoordinates);
                 if (isMovePossible) {
+                    (turn == username[0]) ? turn = username[1] : turn = username[0];
                     let moveInfo;               // Will send different informations to the client depending on ther action (move or kill)
                     if(gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] == -1){       // The target position is free
                         moveInfo = {
                             isKilling: false,
                             id: data.id,
-                            lastClickedCoordinates: data.lastClickedCoordinates
+                            lastClickedCoordinates: data.lastClickedCoordinates,
+                            turn: (turn == username[0]) ? 0 : 1
                         }
                         // Change the tab of pieces positions
                         let a = gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
@@ -93,7 +92,8 @@ io.on('connection', socket => {
                             isKilling: true,
                             enemyID: gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x],
                             id: data.id,
-                            lastClickedCoordinates: data.lastClickedCoordinates
+                            lastClickedCoordinates: data.lastClickedCoordinates,
+                            turn: (turn == username[0]) ? 0 : 1
                         }
                         gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = gameState[data.coordinates.y][data.coordinates.x];
                         // Replace old location by -1 (no piece)
@@ -101,13 +101,12 @@ io.on('connection', socket => {
                         // Send info to kill the other piece
                     }
                     // Send infos to the client 
-                    console.log(gameState);
                     socket.emit('move', moveInfo);
                     socket.broadcast.emit('move', moveInfo);
-                    (turn == username[0]) ? turn = username[1] : turn = username[0];
+                    //turn == 0 ? turn = 1 : turn = 0;     // Swap turn
                 }
-            //}
-       // }
+            }
+        }
         
     });
 
