@@ -21,9 +21,26 @@
                     </form>
                   </div>
             </div>
-
+            <script >
+              if(sessionStorage.name === undefined ){
+                let name = [];
+                let username = '<%= username %>'
+                name.push(username);
+                let nameJSON = JSON.stringify(name);
+                sessionStorage.setItem("name",nameJSON);
+                console.log(name);
+            } else {
+                let nameJSON = sessionStorage.getItem("name");
+                let name = JSON.parse(nameJSON);
+                let username = '<%= username %>'
+                name.push(username);
+                nameJSON = JSON.stringify(name);
+                sessionStorage.setItem("name",JSON.parse(nameJSON));
+                console.log('name: ', JSON.parse(name));
+            }
+            </script>
               <h1 id="title" class="text-white">Bonjour <%= username %></h1>
-              <button id="playB" class="btn btn-success btn-lg btn-block">Play</button>
+              <button id="playB" class="btn btn-success btn-lg btn-block">Play as  <%= username %> </button>
 
             <div id="Wait"> 
               <img src="img/walk.gif" id="gifW">
