@@ -180,10 +180,10 @@ opn('http://localhost:905/')
 //---------------------------------- mySql ---------------------------------//
 
 let mysqlConfig = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'mydb',
+    host: 'sql7.freemysqlhosting.net',
+    user: 'sql7334491',
+    password: 'VgwJqqpjkc',
+    database: 'sql7334491',
 });
 
 

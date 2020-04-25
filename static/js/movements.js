@@ -245,6 +245,7 @@ function movementIsPossible(availableMoves, coordinates) {
     return playable;
 }
 
+//Browser doesn't know module but node.js does
 module.exports = {
     getAvailableMoves: function (type, color, coordinates, isFirstMove, state) {
         return getAvailableMoves(type, color, coordinates, isFirstMove, state);
