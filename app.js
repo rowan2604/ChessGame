@@ -1,16 +1,16 @@
 const opn = require('opn')
 const express = require('express');
 const app = express();
+const session = require('express-session');
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const mysql = require('mysql');
 const bodyParser = require("body-parser");
-const jwt = require('jsonwebtoken');
 const movements = require('./static/js/movements.js');
 
 let numberPlayer = 0;
 let username = [];
-let gameState = [                              //-1: no piece spaces else, unique ID of each pieces
+let gameState = [ //-1: no piece spaces else, unique ID of each pieces
     [0, 1, 2, 3, 4, 5, 6, 7],
     [8, 9, 10, 11, 12, 13, 14, 15],
     [-1, -1, -1, -1, -1, -1, -1, -1],
@@ -19,7 +19,7 @@ let gameState = [                              //-1: no piece spaces else, uniqu
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [16, 17, 18, 19, 20, 21, 22, 23],
     [24, 25, 26, 27, 28, 29, 30, 31]
-    ];
+];
 
 let turn = "";
 
@@ -27,8 +27,48 @@ let turn = "";
 //---------------------------------- Express ---------------------------------//
 
 app.use(express.static(__dirname + '/static'));
+
+
+
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
+
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 9000000 // 2.5h en ms
+    }
+}));
+
 app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
+    if (req.session.loggedin) {
+        res.render('welcome.html', {
+            username: req.session.username
+        });
+    } else {
+        let error = req.session.error;
+        req.session.error = null
+        res.render('index.html', {
+            error: error
+        });
+    }
+});
+
+app.get('/welcome', function (req, res) {
+    if (req.session.loggedin) {
+        res.render('welcome.html', {
+            username: req.session.username
+        });
+    } else {
+        let error = req.session.error;
+        req.session.error = null;
+        res.render('index.html', {
+            error: error
+        });
+    }
 });
 
 //---------------------------------- Server ----------------------------------//
@@ -54,15 +94,15 @@ io.on('connection', socket => {
 
     // INGAME SERVER SIDE
 
-    socket.on('clicked', data =>{
+    socket.on('clicked', data => {
         let pieceID = gameState[data.y][data.x];
         socket.emit('selectPiece', pieceID);
     });
-    
-    socket.on('sv_move', data => {              // sv for server side
+
+    socket.on('sv_move', data => { // sv for server side
         if (turn == data.username) {
             if ((data.color == 'white' && turn == username[0]) || (data.color == 'black' && turn == username[1])) {
-                let availableMoves =  movements.getAvailableMoves(data.type, data.color, data.coordinates, data.isFirstMove, gameState);
+                let availableMoves = movements.getAvailableMoves(data.type, data.color, data.coordinates, data.isFirstMove, gameState);
                 let response = {
                     availableMoves: availableMoves,
                     state: gameState,
@@ -73,9 +113,9 @@ io.on('connection', socket => {
 
                 let isMovePossible = movements.movementIsPossible(availableMoves, data.lastClickedCoordinates);
                 if (isMovePossible) {
-                    (turn == username[0]) ? turn = username[1] : turn = username[0];
-                    let moveInfo;               // Will send different informations to the client depending on ther action (move or kill)
-                    if(gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] == -1){       // The target position is free
+                    (turn == username[0]) ? turn = username[1]: turn = username[0];
+                    let moveInfo; // Will send different informations to the client depending on ther action (move or kill)
+                    if (gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] == -1) { // The target position is free
                         moveInfo = {
                             isKilling: false,
                             id: data.id,
@@ -87,8 +127,7 @@ io.on('connection', socket => {
                         let b = gameState[data.coordinates.y][data.coordinates.x];
                         gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = b;
                         gameState[data.coordinates.y][data.coordinates.x] = a;
-                    }
-                    else{                                                                                       // Else it's an ennemy
+                    } else { // Else it's an ennemy
                         moveInfo = {
                             isKilling: true,
                             enemyID: gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x],
@@ -108,7 +147,7 @@ io.on('connection', socket => {
                 }
             }
         }
-        
+
     });
 
     socket.on('play', data => {
@@ -135,95 +174,67 @@ mysqlConfig.connect(function (err) {
         throw err;
     }
 });
- 
+
 app.use(express.static(__dirname + '/static'));
-app.use(bodyParser.text({
-    type: "application/json"
+app.use(bodyParser.urlencoded({
+    extended: true
 }));
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
+
+
+app.post('/signup', function (request, response) {
+    let username = request.body.user;
+    let password = request.body.pass;
+    if (username && password) {
+        mysqlConfig.query('SELECT * FROM users WHERE username = ?', [username], function (error, results, fields) {
+            if (results.length == 0) {
+                mysqlConfig.query('INSERT into users (username, password) VALUES(?,?)', [username, password], function (error, results, fields) {
+                    if (!error) {
+                        console.log("Inscription reussie OK");
+                        request.session.loggedin = true;
+                        request.session.username = username;
+                        response.redirect('/welcome');
+                    }
+                    response.end();
+                });
+
+            } else {
+                request.session.error = "User already exists";
+                response.redirect('/');
+            }
+        });
+    } else {
+        request.session.error = "Please enter Username and Password!";
+        response.redirect('/');
+    }
 });
 
-let myRouter = express.Router();
-// on creer un chemin de routage pour sign up
-myRouter.route('/signup')
-    .post(function (req, res) {
-        let body = JSON.parse(req.body);
-        // on verifie l'existence de l'username dans la bdd pour la creation du compte
-        let query_verifuser = "SELECT * FROM users WHERE username='" + body.username + "'";
-        mysqlConfig.query(query_verifuser, function (err, result) {
-            if (err) {
-                res.status(500);
-                res.json({
-                    error: 'Error query_verifuser'
-                });
+app.post('/signin', function (request, response) {
+    let username = request.body.user;
+    let password = request.body.pass;
+    if (username && password) {
+        mysqlConfig.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], function (error, results, fields) {
+            if (results.length > 0) {
+                console.log("connexion OK");
+                request.session.loggedin = true;
+                request.session.username = username;
+                response.redirect('/welcome');
             } else {
-                if (result.length == 0) {
-                   // on l'ajoute a la bdd
-                   if(body.username!='' && body.password!='' ){
-                    var query_signup = "INSERT INTO users (username, password) VALUES ('" + body.username + "', '" + body.password + "')";}
-                    mysqlConfig.query(query_signup, function (err, result) {
-                        if (err) {
-                            res.status(500);
-                            res.json({
-                                error: 'Error query_signup'
-                            });
-                        } else {
-                            console.log("1 record inserted");
-                            res.status(200);
-                            res.json("Inscription reussie");
-                        }
-                    });
-                } else {
-                    res.status(500);
-                    res.json({
-                        error: 'username_already_used'
-                    });
-                }
+                request.session.error = "Incorrect Username and/or Password";
+                response.redirect('/');
             }
+            response.end();
         });
+    } else {
+        request.session.error = "Please enter Username and Password!";
+        response.redirect('/');
+    }
+});
 
-    });
 
-    // on creer un chemin de routage pour sign in
-myRouter.route('/signin')
-    .post(function (req, res) {
-        let body = JSON.parse(req.body);
-    // on verifier le nom de l'utilisitaur avec son mot de passe et on affiche un message correspendant       
-        let query_verifuser = "SELECT * FROM users WHERE username='" + body.username + "' AND password='" + body.password + "'";
-        mysqlConfig.query(query_verifuser, function (err, result) {
-            if (err) {
-                res.status(500);
-                res.json({
-                    error: 'Error query_verifuser'
-                });
-            } else {
-                if (result.length == 0) {
-                    res.status(500);
-                    res.json({
-                        error: 'Username or password incorrect'
-                    });
-                } else {
-                    res.status(200);
-                    // res.json("Welcome");
-                    const user = {
-                        username : body.username
-                    };
-                    jwt.sign(user,'secretkey', { expiresIn: '300s' }, (err, token) => {
-                        console.log(token);
-                        res.json({
-                          token
-                         
-                        });
-                        
-                    });
-        
-            
-                }
-            }
-        });
+app.post('/logout', function (request, response) {
 
-    });
+    request.session.loggedin = false;
+    request.session.username = "";
+    response.redirect('/');
 
-app.use(myRouter);
-
+});
