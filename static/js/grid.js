@@ -18,6 +18,11 @@ class Grid{
         this.initGrid();
         // utilities
 
+        this.graph = game.add.graphics(906, 331);
+        this.graph.beginFill(0x000000);
+        this.graph.drawRect(0,0, 300, 10);
+        this.numberPiecesKilled = {black: {killedOnLastRow: 0, numberPerRow: 1, numberOfRow: 1}, white: {killedOnLastRow: 0, numberPerRow: 1, numberOfRow: 1}};
+
         this.state = [                              //-1: no piece spaces else, unique ID of each pieces
             [0, 1, 2, 3, 4, 5, 6, 7],
             [8, 9, 10, 11, 12, 13, 14, 15],
@@ -84,6 +89,51 @@ class Grid{
         
     }
 
+    kill(piece) {
+        let color = piece.getColor();
+        let x = 900;
+        let y = 0;
+        let numberKilled = 0;
+        let numberPerRow = 1;
+        let numberOfRow = 1;
+
+        if (color == 'black') {
+            this.numberPiecesKilled.black.killedOnLastRow++;
+            numberKilled = this.numberPiecesKilled.black.killedOnLastRow;
+            numberPerRow = this.numberPiecesKilled.black.numberPerRow;
+            numberOfRow = this.numberPiecesKilled.black.numberOfRow;
+
+            if (numberKilled > numberPerRow) {
+                numberPerRow++;
+                numberOfRow++;
+                numberKilled = 1;
+                this.numberPiecesKilled.black.numberPerRow++;
+                this.numberPiecesKilled.black.numberOfRow++;
+                this.numberPiecesKilled.black.killedOnLastRow = 1;
+            }
+            x += (2 - ((numberOfRow - 1 )* 0.5)) * this.tile_dimension +  (numberKilled-1) * this.tile_dimension;
+            y += (4.5 + numberOfRow) * this.tile_dimension;
+        }
+        else {
+            this.numberPiecesKilled.white.killedOnLastRow++;
+            numberKilled = this.numberPiecesKilled.white.killedOnLastRow;
+            numberPerRow = this.numberPiecesKilled.white.numberPerRow;
+            numberOfRow = this.numberPiecesKilled.white.numberOfRow;
+
+            if (numberKilled > numberPerRow) {
+                numberPerRow++;
+                numberOfRow++;
+                numberKilled = 1;
+                this.numberPiecesKilled.white.numberPerRow++;
+                this.numberPiecesKilled.white.numberOfRow++;
+                this.numberPiecesKilled.white.killedOnLastRow = 1;
+            }
+            x += (2 - ((numberOfRow -1 )* 0.5)) * this.tile_dimension +  (numberKilled-1) * this.tile_dimension;
+            y +=  (5 - numberOfRow) * this.tile_dimension;
+        }
+        piece.goTo(x, y);
+    }
+
     clickedOnTile(tile){                    // Updates the lest tile we clicked on. We will do stuff in update function
         this.lastClickCoord.x = tile.x / 64;             // 64: Size of a tile, sprite is the child of the group we clicked on. x is relative to the group, not the entire window
         this.lastClickCoord.y = tile.y / 64; 
@@ -136,10 +186,10 @@ class Grid{
             };
             //console.log("username envoye: " + data.username);
             client.send('sv_move', data);
-            let availableMoves = getAvailableMoves(this.selectedPiece.getType(), this.selectedPiece.getColor(), this.selectedPiece.getPosition(), this.selectedPiece.firstMove, this.state);
+            //let availableMoves = getAvailableMoves(this.selectedPiece.getType(), this.selectedPiece.getColor(), this.selectedPiece.getPosition(), this.selectedPiece.firstMove, this.state);
             //let color = this.selectedPiece.getColor();
             //drawAvailableMoves(availableMoves, this.state, this.graphicsAvailableMove, color, this.tile_dimension);
-            if (movementIsPossible(availableMoves, {x: this.lastClickCoord.x, y: this.lastClickCoord.y})) {
+            /*if (movementIsPossible(availableMoves, {x: this.lastClickCoord.x, y: this.lastClickCoord.y})) {
                 /*if(tmp == undefined){
                     // swap the ids in state element
                     let a = this.state[this.lastClickCoord.y][this.lastClickCoord.x];
@@ -195,8 +245,8 @@ class Grid{
                         }
                     }
                 }
-                //this.turn == 0 ? this.turn = 1 : this.turn = 0;     // Swap turn*/
-            }
+                //this.turn == 0 ? this.turn = 1 : this.turn = 0;     // Swap turn
+            }*/
         }
     }
 

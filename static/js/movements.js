@@ -245,14 +245,14 @@ function movementIsPossible(availableMoves, coordinates) {
     return playable;
 }
 
-// module.exports = {
-//     getAvailableMoves: function (type, color, coordinates, isFirstMove, state) {
-//         return getAvailableMoves(type, color, coordinates, isFirstMove, state);
-//     },
-//     processBox: function (coordinates, color, state, moves) {
-//         return processBox(coordinates, color, state, moves);
-//     },
-//     movementIsPossible: function (availableMoves, coordinates) {
-//         return movementIsPossible(availableMoves, coordinates);
-//     }
-// };
+module.exports = {
+    getAvailableMoves: function (type, color, coordinates, isFirstMove, state) {
+        return getAvailableMoves(type, color, coordinates, isFirstMove, state);
+    },
+    processBox: function (coordinates, color, state, moves) {
+        return processBox(coordinates, color, state, moves);
+    },
+    movementIsPossible: function (availableMoves, coordinates) {
+        return movementIsPossible(availableMoves, coordinates);
+    }
+ };
