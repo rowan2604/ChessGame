@@ -78,12 +78,17 @@ io.on('connection', socket => {
         if (numberPlayer < 2) {
             numberPlayer++;
             username.push(data);
-            if (numberPlayer == 1) {
-                turn = username[0];
-            }
             if (numberPlayer == 2) {
-                socket.emit('setup', username[0]);
-                socket.broadcast.emit('setup', username[1]);
+                if (username[0] == 'Guest' && username[1] == 'Guest') {
+                    username = ['Player1', 'Player2']
+                    socket.emit('setup', ['Player2', 'Player1']);
+                    socket.broadcast.emit('setup', ['Player1', 'Player2']);
+                }
+                else {
+                    socket.emit('setup', [username[1], username[0]]);
+                    socket.broadcast.emit('setup', [username[0], username[1]]);
+                }
+                turn = username[0];
             } else {
                 socket.emit('setup', "wait");
             }
@@ -143,11 +148,24 @@ io.on('connection', socket => {
                     // Send infos to the client 
                     socket.emit('move', moveInfo);
                     socket.broadcast.emit('move', moveInfo);
-                    //turn == 0 ? turn = 1 : turn = 0;     // Swap turn
                 }
             }
         }
 
+    });
+
+    socket.on('checkForWin', data => {
+        let moves;
+        for(let i = 0; i < data.types.length; i++){
+            moves = movements.getAvailableMoves(data.types[i], data.color, data.coords[i], data.isFirstMoves[i], gameState);
+            for(let j in moves){
+                if(moves[j].x == data.king_position.x && moves[j].y == data.king_position.y){
+                    socket.emit('game_win', turn);
+                    socket.broadcast.emit('game_win', turn);
+                }
+            }
+        }
+        console.log(data);
     });
 
     socket.on('play', data => {
@@ -162,10 +180,10 @@ opn('http://localhost:905/')
 //---------------------------------- mySql ---------------------------------//
 
 let mysqlConfig = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'mydb',
+    host: 'sql7.freemysqlhosting.net',
+    user: 'sql7334491',
+    password: 'VgwJqqpjkc',
+    database: 'sql7334491',
 });
 
 

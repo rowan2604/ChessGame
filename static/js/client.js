@@ -21,12 +21,10 @@ class Client{
                 alert("A game has already started...");
             }
             else {
-                username.push(data);
+                username = data;
                 document.getElementById("Connection").style.visibility = "hidden";
                 document.getElementById("Wait").style.visibility = "hidden";
                 document.getElementById("Phaser").style.visibility = "visible";
-                
-                console.log(username);
             }
         });
 
@@ -46,13 +44,20 @@ class Client{
 
         this.socket.on('move', data => {
             grid.pieces[data.id].setPosition(data.lastClickedCoordinates.x, data.lastClickedCoordinates.y);
+            console.log("update position");
             grid.pieces[data.id].firstMove = false;
             grid.graphicsAvailableMove.clear();
             grid.selectedPiece = undefined;
             if (data.isKilling) {
                 grid.pieces[data.enemyID].kill();
             }
+            grid.checkForWin();
             grid.turn = data.turn;
+        });
+
+        this.socket.on('game_win', data => {
+            grid.winner = data
+            grid.isPlaying = false;
         });
        
     }
