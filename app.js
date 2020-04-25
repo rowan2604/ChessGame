@@ -1,19 +1,74 @@
 const opn = require('opn')
 const express = require('express');
 const app = express();
+const session = require('express-session');
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const mysql = require('mysql');
 const bodyParser = require("body-parser");
+const movements = require('./static/js/movements.js');
 
 let numberPlayer = 0;
 let username = [];
+let gameState = [ //-1: no piece spaces else, unique ID of each pieces
+    [0, 1, 2, 3, 4, 5, 6, 7],
+    [8, 9, 10, 11, 12, 13, 14, 15],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [16, 17, 18, 19, 20, 21, 22, 23],
+    [24, 25, 26, 27, 28, 29, 30, 31]
+];
+
+let turn = "";
+
 
 //---------------------------------- Express ---------------------------------//
 
 app.use(express.static(__dirname + '/static'));
+
+
+
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
+
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 9000000 // 2.5h en ms
+    }
+}));
+
 app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
+    if (req.session.loggedin) {
+        res.render('welcome.html', {
+            username: req.session.username
+        });
+    } else {
+        let error = req.session.error;
+        req.session.error = null
+        res.render('index.html', {
+            error: error
+        });
+    }
+});
+
+app.get('/welcome', function (req, res) {
+    if (req.session.loggedin) {
+        res.render('welcome.html', {
+            username: req.session.username
+        });
+    } else {
+        let error = req.session.error;
+        req.session.error = null;
+        res.render('index.html', {
+            error: error
+        });
+    }
 });
 
 //---------------------------------- Server ----------------------------------//
@@ -24,14 +79,93 @@ io.on('connection', socket => {
             numberPlayer++;
             username.push(data);
             if (numberPlayer == 2) {
-                socket.emit('setup', username[0]);
-                socket.broadcast.emit('setup', username[1]);
+                if (username[0] == 'Guest' && username[1] == 'Guest') {
+                    username = ['Player1', 'Player2']
+                    socket.emit('setup', ['Player2', 'Player1']);
+                    socket.broadcast.emit('setup', ['Player1', 'Player2']);
+                }
+                else {
+                    socket.emit('setup', [username[1], username[0]]);
+                    socket.broadcast.emit('setup', [username[0], username[1]]);
+                }
+                turn = username[0];
             } else {
                 socket.emit('setup', "wait");
             }
         } else {
             socket.emit('setup', "full");
         }
+    });
+
+    // INGAME SERVER SIDE
+
+    socket.on('clicked', data => {
+        let pieceID = gameState[data.y][data.x];
+        socket.emit('selectPiece', pieceID);
+    });
+
+    socket.on('sv_move', data => { // sv for server side
+        if (turn == data.username) {
+            if ((data.color == 'white' && turn == username[0]) || (data.color == 'black' && turn == username[1])) {
+                let availableMoves = movements.getAvailableMoves(data.type, data.color, data.coordinates, data.isFirstMove, gameState);
+                let response = {
+                    availableMoves: availableMoves,
+                    state: gameState,
+                    color: data.color,
+                    size: data.size
+                };
+                socket.emit('draw', response);
+
+                let isMovePossible = movements.movementIsPossible(availableMoves, data.lastClickedCoordinates);
+                if (isMovePossible) {
+                    (turn == username[0]) ? turn = username[1]: turn = username[0];
+                    let moveInfo; // Will send different informations to the client depending on ther action (move or kill)
+                    if (gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] == -1) { // The target position is free
+                        moveInfo = {
+                            isKilling: false,
+                            id: data.id,
+                            lastClickedCoordinates: data.lastClickedCoordinates,
+                            turn: (turn == username[0]) ? 0 : 1
+                        }
+                        // Change the tab of pieces positions
+                        let a = gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x];
+                        let b = gameState[data.coordinates.y][data.coordinates.x];
+                        gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = b;
+                        gameState[data.coordinates.y][data.coordinates.x] = a;
+                    } else { // Else it's an ennemy
+                        moveInfo = {
+                            isKilling: true,
+                            enemyID: gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x],
+                            id: data.id,
+                            lastClickedCoordinates: data.lastClickedCoordinates,
+                            turn: (turn == username[0]) ? 0 : 1
+                        }
+                        gameState[data.lastClickedCoordinates.y][data.lastClickedCoordinates.x] = gameState[data.coordinates.y][data.coordinates.x];
+                        // Replace old location by -1 (no piece)
+                        gameState[data.coordinates.y][data.coordinates.x] = -1;
+                        // Send info to kill the other piece
+                    }
+                    // Send infos to the client 
+                    socket.emit('move', moveInfo);
+                    socket.broadcast.emit('move', moveInfo);
+                }
+            }
+        }
+
+    });
+
+    socket.on('checkForWin', data => {
+        let moves;
+        for(let i = 0; i < data.types.length; i++){
+            moves = movements.getAvailableMoves(data.types[i], data.color, data.coords[i], data.isFirstMoves[i], gameState);
+            for(let j in moves){
+                if(moves[j].x == data.king_position.x && moves[j].y == data.king_position.y){
+                    socket.emit('game_win', turn);
+                    socket.broadcast.emit('game_win', turn);
+                }
+            }
+        }
+        console.log(data);
     });
 
     socket.on('play', data => {
@@ -53,87 +187,72 @@ let mysqlConfig = mysql.createConnection({
 });
 
 
- mysqlConfig.connect(function (err) {
+mysqlConfig.connect(function (err) {
     if (err) {
         throw err;
     }
 });
- 
+
 app.use(express.static(__dirname + '/static'));
-app.use(bodyParser.text({
-    type: "application/json"
+app.use(bodyParser.urlencoded({
+    extended: true
 }));
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
+
+
+app.post('/signup', function (request, response) {
+    let username = request.body.user;
+    let password = request.body.pass;
+    if (username && password) {
+        mysqlConfig.query('SELECT * FROM users WHERE username = ?', [username], function (error, results, fields) {
+            if (results.length == 0) {
+                mysqlConfig.query('INSERT into users (username, password) VALUES(?,?)', [username, password], function (error, results, fields) {
+                    if (!error) {
+                        console.log("Inscription reussie OK");
+                        request.session.loggedin = true;
+                        request.session.username = username;
+                        response.redirect('/welcome');
+                    }
+                    response.end();
+                });
+
+            } else {
+                request.session.error = "User already exists";
+                response.redirect('/');
+            }
+        });
+    } else {
+        request.session.error = "Please enter Username and Password!";
+        response.redirect('/');
+    }
 });
 
-let myRouter = express.Router();
-// on creer un chemin de routage pour sign up
-myRouter.route('/signup')
-    .post(function (req, res) {
-        let body = JSON.parse(req.body);
-        // on verifie l'existence de l'username dans la bdd pour la creation du compte
-        let query_verifuser = "SELECT * FROM users WHERE username='" + body.username + "'";
-        mysqlConfig.query(query_verifuser, function (err, result) {
-            if (err) {
-                res.status(500);
-                res.json({
-                    error: 'Error query_verifuser'
-                });
+app.post('/signin', function (request, response) {
+    let username = request.body.user;
+    let password = request.body.pass;
+    if (username && password) {
+        mysqlConfig.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], function (error, results, fields) {
+            if (results.length > 0) {
+                console.log("connexion OK");
+                request.session.loggedin = true;
+                request.session.username = username;
+                response.redirect('/welcome');
             } else {
-                if (result.length == 0) {
-                   // on l'ajoute a la bdd
-                   if(body.username!='' && body.password!='' ){
-                    var query_signup = "INSERT INTO users (username, password) VALUES ('" + body.username + "', '" + body.password + "')";}
-                    mysqlConfig.query(query_signup, function (err, result) {
-                        if (err) {
-                            res.status(500);
-                            res.json({
-                                error: 'Error query_signup'
-                            });
-                        } else {
-                            console.log("1 record inserted");
-                            res.status(200);
-                            res.json("Inscription reussie");
-                        }
-                    });
-                } else {
-                    res.status(500);
-                    res.json({
-                        error: 'username_already_used'
-                    });
-                }
+                request.session.error = "Incorrect Username and/or Password";
+                response.redirect('/');
             }
+            response.end();
         });
+    } else {
+        request.session.error = "Please enter Username and Password!";
+        response.redirect('/');
+    }
+});
 
-    });
-    // on creer un chemin de routage pour sign in
-myRouter.route('/signin')
-    .post(function (req, res) {
-        let body = JSON.parse(req.body);
-    // on verfier le nom de l'utilisitaur avec son mot de passe et on affiche un message correspendant       
-        let query_verifuser = "SELECT * FROM users WHERE username='" + body.username + "' AND password='" + body.password + "'";
-        mysqlConfig.query(query_verifuser, function (err, result) {
-            if (err) {
-                res.status(500);
-                res.json({
-                    error: 'Error query_verifuser'
-                });
-            } else {
-                if (result.length == 0) {
-                    res.status(500);
-                    res.json({
-                        error: 'Username or password incorrect'
-                    });
-                } else {
-                    res.status(200);
-                    res.json("Welcome");
-            
-                }
-            }
-        });
 
-    });
+app.post('/logout', function (request, response) {
 
-app.use(myRouter);
+    request.session.loggedin = false;
+    request.session.username = "";
+    response.redirect('/');
 
+});

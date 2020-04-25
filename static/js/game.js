@@ -1,4 +1,4 @@
-let game = new Phaser.Game(1000, 700, Phaser.AUTO, 'Phaser', { preload: preload, create: create, update: update, render: render }); 
+let game = new Phaser.Game(1366, 657, Phaser.AUTO, 'Phaser', { preload: preload, create: create, update: update, render: render }); 
 
 let black_tile;
 let white_tile;
@@ -9,12 +9,12 @@ let winner_text;
 function preload() {+
     game.load.image('black_tile', '../assets/black_tile.png');
     game.load.image('white_tile', '../assets/white_tile.png');
-    game.load.spritesheet('pieces', '../assets/pieces2.png', 64, 64, 12);
+    game.load.spritesheet('pieces', '../assets/pieces2.png', 64, 64, 12); 
 }
 
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    game.stage.backgroundColor = '#CD9261';
+    game.stage.backgroundColor = "#ffffff";
 
     grid = new Grid(pieces);
 
@@ -26,12 +26,10 @@ function create() {
 
     winner_text = game.add.text(grid.getPosition().x, grid.getPosition().y, '', {font: "16px Arial", fontStyle: 'bold', fill: "#000000"});
     winner_text.anchor.setTo(0.5, 0.5);
-    winner_text.x = grid.getPosition().x + grid.getSize().width/2.
-    winner_text.y = grid.getPosition().y + grid.getSize().height  + 30; 
+    winner_text.x = grid.getPosition().x + grid.getSize().width/2;
+    winner_text.y = grid.getPosition().y + grid.getSize().height + 50; 
     
-
     initPieces();
-
 }
 
 function initPieces(){
