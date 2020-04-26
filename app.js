@@ -177,6 +177,7 @@ server.listen(0905);
 opn('http://localhost:905/')
 
 //---------------------------------- mySql ---------------------------------//
+//free hosting sql
 let mysqlConfig = mysql.createConnection({
      host: 'sql7.freemysqlhosting.net',
      user: 'sql7335887',
@@ -184,15 +185,7 @@ let mysqlConfig = mysql.createConnection({
    database: 'sql7335887',
 });
 
-// let mysqlConfig = mysql.createConnection({
-//     host: 'localhost',
-//     user: 'root',
-//     password: '',
-//     database: 'mydb',
-// });
-
-
-
+//verify if there is no error during the connexion
 mysqlConfig.connect(function (err) {
     if (err) {
         throw err;
