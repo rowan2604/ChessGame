@@ -18,16 +18,18 @@ function create() {
     game.add.tileSprite(0, 0, 1366, 657, 'background');
     grid = new Grid(pieces);
 
+    client.send("requestPlayerNames", "");
+
     let columns_id = game.add.text(grid.getPosition().x + 32, grid.getPosition().y + 4 + grid.getSize().height, '', {font: "16px Arial", fontStyle: 'bold', fill: "#000000", tabs: 64});
     let lines_id = game.add.text(grid.getPosition().x - 20, grid.getPosition().y + 26, '8\n7\n6\n5\n4\n3\n2\n1', {font: "16px Arial", fontStyle: 'bold', fill: "#000000"});
     let numbers = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
     columns_id.parseList(numbers);
     lines_id.lineSpacing = 40;
 
-    winner_text = game.add.text(grid.getPosition().x, grid.getPosition().y, '', {font: "16px Arial", fontStyle: 'bold', fill: "#000000"});
+    winner_text = game.add.text(grid.getPosition().x, grid.getPosition().y, '', {font: "20px Arial", fontStyle: 'bold', fill: "#000000"});
     winner_text.anchor.setTo(0.5, 0.5);
     winner_text.x = grid.getPosition().x + grid.getSize().width/2;
-    winner_text.y = grid.getPosition().y + grid.getSize().height + 50; 
+    winner_text.y = grid.getPosition().y + grid.getSize().height + 50;
     
     initPieces();
 }

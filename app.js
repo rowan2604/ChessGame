@@ -164,7 +164,6 @@ io.on('connection', socket => {
                 }
             }
         }
-        console.log(data);
     });
 
     socket.on('play', data => {
@@ -179,10 +178,10 @@ opn('http://localhost:905/')
 //---------------------------------- mySql ---------------------------------//
 //free hosting sql
 let mysqlConfig = mysql.createConnection({
-     host: 'sql7.freemysqlhosting.net',
-     user: 'sql7335927',
-     password: 'bQRhMpsce8',
-   database: 'sql7335927',
+    host: 'sql7.freemysqlhosting.net',
+    user: 'sql7335887',
+    password: '8F8XBaRYS6',
+    database: 'sql7335887',
 });
 
 //verify if there is no error during the connexion

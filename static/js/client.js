@@ -28,6 +28,8 @@ class Client{
             }
         });
 
+        // INGAME DATA RECEIVING
+
         this.socket.on('selectPiece', data =>{
             if(data != -1){
                 grid.clickingActions(grid.pieces[data]);
@@ -44,12 +46,10 @@ class Client{
 
         this.socket.on('move', data => {
             grid.pieces[data.id].setPosition(data.lastClickedCoordinates.x, data.lastClickedCoordinates.y);
-            console.log("update position");
             grid.pieces[data.id].firstMove = false;
             grid.graphicsAvailableMove.clear();
             grid.selectedPiece = undefined;
             if (data.isKilling) {
-                //grid.pieces[data.enemyID].kill();
                 grid.kill(pieces[data.enemyID]);
             }
             grid.checkForWin();
