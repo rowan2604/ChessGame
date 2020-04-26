@@ -256,4 +256,4 @@ module.exports = {
     movementIsPossible: function (availableMoves, coordinates) {
         return movementIsPossible(availableMoves, coordinates);
     }
- };
+};

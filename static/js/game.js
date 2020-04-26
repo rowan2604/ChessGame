@@ -10,12 +10,12 @@ function preload() {+
     game.load.image('black_tile', '../assets/black_tile.png');
     game.load.image('white_tile', '../assets/white_tile.png');
     game.load.spritesheet('pieces', '../assets/pieces2.png', 64, 64, 12); 
+    game.load.image('background', '../assets/wood.jpg');
 }
 
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    game.stage.backgroundColor = "#ffffff";
-
+    game.add.tileSprite(0, 0, 1366, 657, 'background');
     grid = new Grid(pieces);
 
     let columns_id = game.add.text(grid.getPosition().x + 32, grid.getPosition().y + 4 + grid.getSize().height, '', {font: "16px Arial", fontStyle: 'bold', fill: "#000000", tabs: 64});
