@@ -14,6 +14,11 @@ class Grid{
         this.initGrid();
         // utilities
 
+        this.graph = game.add.graphics(906, 331);
+        this.graph.beginFill(0x000000);
+        this.graph.drawRect(0,0, 300, 10);
+        this.numberPiecesKilled = {black: {killedOnLastRow: 0, numberPerRow: 1, numberOfRow: 1}, white: {killedOnLastRow: 0, numberPerRow: 1, numberOfRow: 1}};
+
         this.state = [                              //-1: no piece spaces else, unique ID of each pieces
             [0, 1, 2, 3, 4, 5, 6, 7],
             [8, 9, 10, 11, 12, 13, 14, 15],
@@ -78,6 +83,51 @@ class Grid{
             return undefined;
         }
         
+    }
+
+    kill(piece) {
+        let color = piece.getColor();
+        let x = 900;
+        let y = 0;
+        let numberKilled = 0;
+        let numberPerRow = 1;
+        let numberOfRow = 1;
+
+        if (color == 'black') {
+            this.numberPiecesKilled.black.killedOnLastRow++;
+            numberKilled = this.numberPiecesKilled.black.killedOnLastRow;
+            numberPerRow = this.numberPiecesKilled.black.numberPerRow;
+            numberOfRow = this.numberPiecesKilled.black.numberOfRow;
+
+            if (numberKilled > numberPerRow) {
+                numberPerRow++;
+                numberOfRow++;
+                numberKilled = 1;
+                this.numberPiecesKilled.black.numberPerRow++;
+                this.numberPiecesKilled.black.numberOfRow++;
+                this.numberPiecesKilled.black.killedOnLastRow = 1;
+            }
+            x += (2 - ((numberOfRow - 1 )* 0.5)) * this.tile_dimension +  (numberKilled-1) * this.tile_dimension;
+            y += (4.5 + numberOfRow) * this.tile_dimension;
+        }
+        else {
+            this.numberPiecesKilled.white.killedOnLastRow++;
+            numberKilled = this.numberPiecesKilled.white.killedOnLastRow;
+            numberPerRow = this.numberPiecesKilled.white.numberPerRow;
+            numberOfRow = this.numberPiecesKilled.white.numberOfRow;
+
+            if (numberKilled > numberPerRow) {
+                numberPerRow++;
+                numberOfRow++;
+                numberKilled = 1;
+                this.numberPiecesKilled.white.numberPerRow++;
+                this.numberPiecesKilled.white.numberOfRow++;
+                this.numberPiecesKilled.white.killedOnLastRow = 1;
+            }
+            x += (2 - ((numberOfRow -1 )* 0.5)) * this.tile_dimension +  (numberKilled-1) * this.tile_dimension;
+            y +=  (5 - numberOfRow) * this.tile_dimension;
+        }
+        piece.goTo(x, y);
     }
 
     clickedOnTile(tile){                    // Updates the lest tile we clicked on. We will do stuff in update function

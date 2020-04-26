@@ -28,6 +28,11 @@ class Piece{
         }
     }
 
+    goTo(x, y) {
+        this.tween = game.add.tween(this.sprite).to({x: x, y: y}, 500);
+        this.tween.start();
+    }
+
     getPosition(){
         return this.coord;
     }
@@ -48,10 +53,10 @@ class Piece{
         return this.firstMove;
     }
 
-    kill(){
+    /*kill(){
         this.isAlive = false;
         this.sprite.visible = false;
-    }
+    }*/
     
     update(){
         // Stops the sprite
