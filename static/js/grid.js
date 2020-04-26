@@ -144,7 +144,6 @@ class Grid{
     }
 
     clickingActions(tmp){
-        //let tmp = this.getPiece(this.lastClickCoord.x, this.lastClickCoord.y);       // Represents the piece we just clicked on (If selectable).
         if(tmp != undefined){           // We define the curret piece
             if(this.turn == 1 && tmp.getColor() == 'black'){           // White player can't select a black piece.
                 if(tmp != this.selectedPiece){
@@ -177,11 +176,9 @@ class Grid{
                 coordinates: this.selectedPiece.getPosition(),
                 lastClickedCoordinates: this.lastClickCoord,
                 isFirstMove: this.selectedPiece.isFirstMove(),
-                //state: this.state,
                 size: this.tile_dimension,
                 id: this.selectedPiece.getId()
             };
-            //console.log("username envoye: " + data.username);
             client.send('sv_move', data);
         }
     }

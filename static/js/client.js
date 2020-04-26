@@ -50,7 +50,6 @@ class Client{
             grid.graphicsAvailableMove.clear();
             grid.selectedPiece = undefined;
             if (data.isKilling) {
-                //grid.pieces[data.enemyID].kill();
                 grid.kill(pieces[data.enemyID]);
             }
             grid.checkForWin();
