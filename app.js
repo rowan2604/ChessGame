@@ -164,7 +164,6 @@ io.on('connection', socket => {
                 }
             }
         }
-        console.log(data);
     });
 
     socket.on('play', data => {
