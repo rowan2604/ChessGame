@@ -184,20 +184,11 @@ let mysqlConfig = mysql.createConnection({
     database: 'sql7335887',
 });
 
-/*let mysqlConfig = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'mydb',
-});*/
-
-
-
 // let mysqlConfig = mysql.createConnection({
 //     host: 'localhost',
 //     user: 'root',
 //     password: '',
-//     database: 'myd',
+//     database: 'mydb',
 // });
 
 
